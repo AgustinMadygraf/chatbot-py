@@ -1,0 +1,23 @@
+version: "3.1"
+
+intents:
+  - saludo
+  - despedida
+  - out_of_scope
+  - not_implemented
+
+responses:
+  utter_saludo:
+  - text: "¡Hola!  ¿en qué te puedo dar una mano hoy? ¿Necesitás ayuda con el diseño de tu NLU, armando unas stories o rules, desarrollando actions personalizadas, o quizás pensando en el despliegue de tu bot?"
+
+  utter_despedida:
+  - text: "Adiós"
+
+actions:
+  - utter_saludo
+  - utter_despedida
+  - action_gemini_fallback
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
