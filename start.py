@@ -8,10 +8,11 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, Iterable, List, Tuple
+import shutil
 
-# Commands to launch. The first two stay in the background while the last one
-# (uvicorn) keeps the container alive for Railway's health checks.
+# Commands to launch. The Rasa services are optional and only started when the
+# binary is available and not explicitly disabled via environment variables.
 RASA_RUN_CMD: List[str] = [
     "rasa",
     "run",
@@ -47,12 +48,66 @@ UVICORN_CMD: List[str] = [
     "--proxy-headers",
 ]
 
-BACKGROUND_PROCESSES: List[Tuple[str, List[str]]] = [
-    ("rasa", RASA_RUN_CMD),
-    ("actions", RASA_ACTIONS_CMD),
-]
 
-FOREGROUND_PROCESS: Tuple[str, List[str]] = ("uvicorn", UVICORN_CMD)
+def _is_truthy(value: str | None) -> bool:
+    if value is None:
+        return False
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _should_start_rasa(env: Dict[str, str]) -> Tuple[bool, str]:
+    if _is_truthy(env.get("DISABLE_RASA")) or _is_truthy(env.get("SKIP_RASA")):
+        print("Rasa startup disabled via environment variable.", file=sys.stderr)
+        return False, ""
+
+    rasa_binary = RASA_RUN_CMD[0]
+    if shutil.which(rasa_binary, path=env.get("PATH")) is None:
+        print(f"Command '{rasa_binary}' not found. Skipping Rasa startup.", file=sys.stderr)
+        return False, ""
+
+    model_value = env.get("RASA_MODEL_PATH", "rasa_project/models")
+    model_path = Path(model_value)
+    if not model_path.is_absolute():
+        model_path = Path(__file__).resolve().parent / model_path
+    if not model_path.exists():
+        print(
+            f"Model path '{model_path}' not found. Skipping Rasa startup.",
+            file=sys.stderr,
+        )
+        return False, str(model_path)
+
+    return True, str(model_path)
+
+
+def _should_start_actions(env: Dict[str, str]) -> bool:
+    if _is_truthy(env.get("DISABLE_RASA_ACTIONS")) or _is_truthy(env.get("SKIP_RASA_ACTIONS")):
+        print("Rasa actions server disabled via environment variable.", file=sys.stderr)
+        return False
+    return True
+
+
+def _build_process_plan(env: Dict[str, str]) -> Tuple[List[Tuple[str, List[str]]], Tuple[str, List[str]]]:
+    background: List[Tuple[str, List[str]]] = []
+    start_rasa, model_path = _should_start_rasa(env)
+    if start_rasa:
+        background.append(("rasa", _build_rasa_run_cmd(model_path)))
+        if _should_start_actions(env):
+            background.append(("actions", RASA_ACTIONS_CMD))
+    else:
+        print("Rasa services will not be started; using FastAPI webhook only.", file=sys.stderr)
+
+    foreground: Tuple[str, List[str]] = ("uvicorn", UVICORN_CMD)
+    return background, foreground
+
+
+def _build_rasa_run_cmd(model_path: str) -> List[str]:
+    cmd = list(RASA_RUN_CMD)
+    try:
+        model_index = cmd.index("--model") + 1
+    except ValueError:
+        return cmd
+    cmd[model_index] = model_path
+    return cmd
 
 
 def _prepare_env() -> Dict[str, str]:
@@ -66,17 +121,24 @@ def _prepare_env() -> Dict[str, str]:
 class ProcessManager:
     """Utility to spawn services and ensure they terminate gracefully."""
 
-    def __init__(self, env: Dict[str, str]) -> None:
+    def __init__(
+        self,
+        env: Dict[str, str],
+        background_processes: Iterable[Tuple[str, List[str]]],
+        foreground_process: Tuple[str, List[str]],
+    ) -> None:
         self._env = env
+        self._background_processes = list(background_processes)
+        self._foreground_process = foreground_process
         self._processes: List[Tuple[str, subprocess.Popen[str]]] = []
         self._shutdown_requested = False
 
     def start_background(self) -> None:
-        for name, cmd in BACKGROUND_PROCESSES:
+        for name, cmd in self._background_processes:
             self._spawn(name, cmd)
 
     def start_foreground(self) -> subprocess.Popen[str]:
-        name, cmd = FOREGROUND_PROCESS
+        name, cmd = self._foreground_process
         proc = self._spawn(name, cmd)
         return proc
 
@@ -155,7 +217,8 @@ class ProcessManager:
 
 def main() -> int:
     env = _prepare_env()
-    manager = ProcessManager(env)
+    background_processes, foreground_process = _build_process_plan(env)
+    manager = ProcessManager(env, background_processes, foreground_process)
 
     def _signal_handler(signum: int, _frame) -> None:
         print(f"Received signal {signum}; shutting down.", file=sys.stderr)
