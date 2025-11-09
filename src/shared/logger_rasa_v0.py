@@ -29,9 +29,7 @@ class TruncatingColoredFormatter(coloredlogs.ColoredFormatter):
 def get_logger(name="rasa-bot"):
     "Configura y devuelve un logger con formato estilo Rasa usando coloredlogs."
     config = get_config()
-    log_level = config.get("LOG_LEVEL", "DEBUG").upper()
     logger = logging.getLogger(name)
-    # Evita agregar múltiples handlers si ya existe uno
     raw_max_length = config.get("LOG_MESSAGE_MAX_LENGTH", 160)
     try:
         max_length = int(raw_max_length)
@@ -44,7 +42,7 @@ def get_logger(name="rasa-bot"):
         fmt = "%(asctime)s %(levelname)-8s %(name)-24s - %(message)s"
         datefmt = "%Y-%m-%d %H:%M:%S"
         coloredlogs.install(
-            level=log_level,
+            level="DEBUG",
             logger=logger,
             fmt=fmt,
             datefmt=datefmt,
@@ -65,5 +63,5 @@ def get_logger(name="rasa-bot"):
             formatter = getattr(handler, "formatter", None)
             if isinstance(formatter, TruncatingColoredFormatter):
                 formatter.max_length = max_length
-    logger.setLevel(getattr(logging, log_level, logging.DEBUG))
+    logger.setLevel(logging.DEBUG)
     return logger

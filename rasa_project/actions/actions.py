@@ -59,8 +59,7 @@ class ActionGeminiFallback(Action):
             config = get_config()
             instructions_path = config.get("SYSTEM_INSTRUCTIONS_PATH")
             logger.debug(
-                "Config recibida | LOG_LEVEL=%s | API_KEY_presente=%s | instructions_path=%s",
-                config.get("LOG_LEVEL"),
+                "Config recibida | API_KEY_presente=%s | instructions_path=%s",
                 bool(config.get("GOOGLE_GEMINI_API_KEY")),
                 instructions_path,
             )
