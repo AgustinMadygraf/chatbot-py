@@ -2,14 +2,9 @@
 Path: src/infrastructure/fastapi/fastapi_webhook.py
 """
 
-
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
-
-
 import asyncio
 import httpx
+import requests
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +14,7 @@ from src.shared.config import get_config
 
 from src.infrastructure.requests.requests_http_client import RequestsHttpClient
 from src.interface_adapter.controller.telegram_controller import TelegramMessageController
+from src.interface_adapter.controller.webchat_controller import WebchatMessageController
 from src.interface_adapter.gateways.agent_gateway import AgentGateway
 from src.interface_adapter.presenters.telegram_presenter import TelegramMessagePresenter
 from src.use_cases.generate_agent_response_use_case import GenerateAgentResponseUseCase
@@ -40,6 +36,7 @@ generate_agent_bot_use_case = GenerateAgentResponseUseCase(
 )
 
 telegram_controller = TelegramMessageController(generate_agent_bot_use_case, telegram_presenter)
+webchat_controller = WebchatMessageController(generate_agent_bot_use_case, telegram_presenter)
 
 app = FastAPI()
 
@@ -124,16 +121,22 @@ async def webchat_webhook(request: Request):
     if not user_id or not user_text:
         return {"role": "assistant", "text": "Faltan datos en la solicitud."}
 
-    # Construir entidad Message
-    webchat_message = Message(
-        to=user_id,
-        body=user_text
-    )
-
-    # Generar respuesta usando el caso de uso conversacional
-    response_message = generate_agent_bot_use_case.execute(user_id, webchat_message)
+    try:
+        user_id, response_text = await webchat_controller.handle(user_id, user_text)
+    except (requests.exceptions.ConnectionError, ConnectionRefusedError) as e:
+        logger.error("[Webchat] Error de conexión con Rasa: %s", e, exc_info=True)
+        return {
+            "role": "assistant",
+            "text": "Lo sentimos, el servidor no está disponible en este momento. Por favor, comuníquese con el área de mantenimiento."
+        }
+    except (ValueError, TypeError, AttributeError, KeyError) as e:
+        logger.error("[Webchat] Error inesperado: %s", e, exc_info=True)
+        return {
+            "role": "assistant",
+            "text": "Lo sentimos, hubo un error procesando su mensaje."
+        }
 
     return {
         "role": "assistant",
-        "text": response_message.body
+        "text": response_text
     }
