@@ -3,6 +3,11 @@ Path: src/infrastructure/fastapi/fastapi_webhook.py
 """
 
 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+
 import asyncio
 import httpx
 from fastapi import FastAPI, Request
@@ -102,3 +107,30 @@ async def telegram_webhook(request: Request):
 async def index():
     "Página de inicio simple para verificar que el servidor está funcionando."
     return {"message": "Bienvenido al webhook de FastAPI"}
+
+@app.post("/webchat/webhook")
+async def webchat_webhook(request: Request):
+    """
+    Endpoint para recibir mensajes del chat web y responder con el mensaje del agente.
+    Espera un JSON: { "user_id": "...", "text": "mensaje del usuario" }
+    Responde: { "role": "assistant", "text": "respuesta del agente" }
+    """
+    data = await request.json()
+    user_id = data.get("user_id", None)
+    user_text = data.get("text", "")
+    if not user_id or not user_text:
+        return {"role": "assistant", "text": "Faltan datos en la solicitud."}
+
+    # Construir entidad Message
+    webchat_message = Message(
+        to=user_id,
+        body=user_text
+    )
+
+    # Generar respuesta usando el caso de uso conversacional
+    response_message = generate_agent_bot_use_case.execute(user_id, webchat_message)
+
+    return {
+        "role": "assistant",
+        "text": response_message.body
+    }
