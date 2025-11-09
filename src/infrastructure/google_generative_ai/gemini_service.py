@@ -60,8 +60,7 @@ class GeminiService(GeminiResponder):
     def get_response(self, prompt, system_instructions=None):
         "Genera una respuesta usando el modelo Gemini, opcionalmente con instrucciones de sistema."
         try:
-            config = get_config()
-            model_name = config.get("GOOGLE_GEMINI_MODEL", "models/gemini-2.5-flash")
+            model_name = "models/gemini-2.5-flash"
             logger.debug("Usando modelo Gemini: %s", model_name)
             model = genai.GenerativeModel(model_name)
             instructions = system_instructions or self.system_instructions

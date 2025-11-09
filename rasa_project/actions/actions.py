@@ -7,7 +7,7 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from pathlib import Path
 
-from src.shared.config import get_config
+from src.shared.config import DEFAULT_SYSTEM_INSTRUCTIONS_PATH
 from src.shared.logger_rasa_v0 import get_logger
 
 from src.infrastructure.repositories.json_instructions_repository import JsonInstructionsRepository
@@ -55,12 +55,10 @@ class ActionGeminiFallback(Action):
 
         # --- Reutilizar gateways, casos de uso y entidades ---
         try:
-
-            config = get_config()
-            instructions_path = config.get("SYSTEM_INSTRUCTIONS_PATH")
+            # Elimina config y usa DEFAULT_SYSTEM_INSTRUCTIONS_PATH
+            instructions_path = str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)
             logger.debug(
-                "Config recibida | API_KEY_presente=%s | instructions_path=%s",
-                bool(config.get("GOOGLE_GEMINI_API_KEY")),
+                "instructions_path=%s",
                 instructions_path,
             )
             if instructions_path:

@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from src.shared.logger_rasa_v0 import get_logger
+from src.shared.config import DEFAULT_SYSTEM_INSTRUCTIONS_PATH
 
 logger = get_logger("fastapi-app")
 
@@ -27,16 +28,13 @@ def create_app(mode="GOOGLE_GEMINI"):
         return espejo_app
 
     # --- SOLO SE EJECUTA SI NO ES ESPEJO ---
-    from src.shared.config import get_config
     from src.infrastructure.google_generative_ai.gemini_service import GeminiService
     from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
     from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
     from src.infrastructure.repositories.json_instructions_repository import JsonInstructionsRepository
 
-    config = get_config()
-
     # Obtener ruta de instrucciones del sistema
-    instructions_path = config.get("SYSTEM_INSTRUCTIONS_PATH")
+    instructions_path = str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)
 
     # Crear repositorio de instrucciones
     instructions_repository = JsonInstructionsRepository(instructions_path)

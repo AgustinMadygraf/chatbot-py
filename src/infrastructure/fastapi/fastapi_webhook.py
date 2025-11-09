@@ -24,12 +24,9 @@ logger = get_logger("fastapi-webhook")
 config = get_config()
 TELEGRAM_TOKEN = config.get("TELEGRAM_API_KEY")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-RASA_URL = config.get("RASA_API_URL")
-
-logger.debug("Utilizando RASA_API_URL=%s", RASA_URL)
 
 http_client = RequestsHttpClient()
-agent_bot_service = AgentGateway(RASA_URL, http_client=http_client)
+agent_bot_service = AgentGateway(http_client=http_client)
 telegram_presenter = TelegramMessagePresenter()
 
 # Inyectar el caso de uso de transcripción en GenerateAgentResponseUseCase

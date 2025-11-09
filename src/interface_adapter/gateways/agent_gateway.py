@@ -1,4 +1,6 @@
-"""Gateway to communicate with the Rasa webhook."""
+"""
+Path: src/interface_adapter/gateways/agent_gateway.py
+"""
 
 from src.shared.logger_rasa_v0 import get_logger
 
@@ -7,10 +9,11 @@ logger = get_logger("agent-gateway")
 
 class AgentGateway:
     "Interfaz para comunicarse con un modelo Rasa."
-    def __init__(self, agent_bot_url: str, http_client):
-        self.agent_bot_url = agent_bot_url
+    def __init__(self, http_client):
+        # Hardcodea el endpoint local de Rasa REST
+        self.agent_bot_url = "http://localhost:5005/webhooks/rest/webhook"
         self.http_client = http_client
-        logger.debug("Inicializando AgentGateway con endpoint %s", agent_bot_url)
+        logger.debug("Inicializando AgentGateway con endpoint %s", self.agent_bot_url)
 
     def get_response(self, message_or_text) -> str:
         "Envía un mensaje al bot Rasa y devuelve la respuesta."

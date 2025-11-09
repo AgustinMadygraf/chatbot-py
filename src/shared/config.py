@@ -22,15 +22,14 @@ def get_config():
 
     config = {
         "TELEGRAM_API_KEY": os.getenv('TELEGRAM_API_KEY'),
-        "RASA_API_URL": os.getenv('RASA_API_URL'),
-        "SYSTEM_INSTRUCTIONS_PATH": os.getenv('SYSTEM_INSTRUCTIONS_PATH', str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)),
         "GOOGLE_GEMINI_API_KEY": os.getenv('GOOGLE_GEMINI_API_KEY'),
     }
     logger.debug(
-        "Config cargada | TELEGRAM_KEY=%s | RASA_API_URL=%s | SYSTEM_PATH=%s | GEMINI_KEY=%s",
+        "Config cargada | TELEGRAM_KEY=%s | GEMINI_KEY=%s",
         bool(config["TELEGRAM_API_KEY"]),
-        config["RASA_API_URL"],
-        config["SYSTEM_INSTRUCTIONS_PATH"],
         bool(config["GOOGLE_GEMINI_API_KEY"]),
     )
     return config
+
+
+__all__ = ["get_config", "DEFAULT_SYSTEM_INSTRUCTIONS_PATH"]
