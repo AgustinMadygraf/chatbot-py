@@ -1,0 +1,63 @@
+version: "3.1"
+
+nlu:
+- intent: saludo
+  examples: |
+    - hola
+    - buenas
+    - qué tal
+    - hola, ¿qué tal?
+    - buenos días
+    - buenas tardes
+    - buenas noches
+    - buen día
+
+- intent: despedida
+  examples: |
+    - hasta luego
+    - adiós
+    - nos vemos luego
+    - chao
+    - hasta pronto
+    - que tengas un buen día
+    - nos vemos
+    - adiós adiós
+    - hasta la próxima
+    - chau
+    - Chau chau
+    - Chau, hasta luego
+
+- intent: out_of_scope
+  examples: |
+    - ¿Cuál es la capital de Francia?
+    - ¿Cómo se hace una pizza?
+    - ¿Puedes contarme un chiste?
+    - ¿Qué opinas de la inteligencia artificial?
+    - ¿Cuál es el clima hoy?
+    - asdfghjkl
+    - No entiendo nada
+    - ¿Puedes ayudarme con algo raro?
+
+- intent: not_implemented
+  examples: |
+    - ¿Puedo personalizar el diseño de la bolsa desde la web?
+    - ¿Tienen seguimiento online de pedidos?
+    - ¿Puedo pagar con criptomonedas?
+    - ¿Ofrecen entrega en el día?
+    - ¿Puedo pedir una muestra gratis?
+    - ¿Tienen un catálogo descargable?
+    - ¿Puedo hacer el pedido directamente por este chat?
+    - ¿Puedo ver el stock en tiempo real?
+    - ¿Tienen integración con Mercado Libre?
+    - ¿Puedo recibir factura electrónica automáticamente?
+
+- intent: consultar_producto
+  examples: |
+    - ¿Qué bolsas de papel ofrecen?
+    - Quiero saber qué tipos de bolsas de papel tienen
+    - ¿Tienen bolsas de papel marrón?
+    - ¿Venden bolsas de papel blanco?
+    - ¿Qué opciones de bolsas de papel hay?
+    - ¿Me contás sobre las bolsas de papel?
+    - ¿Qué bolsas de papel tienen con manijas?
+    - ¿Tienen bolsas de papel sin manijas?

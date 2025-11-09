@@ -5,17 +5,28 @@ intents:
   - despedida
   - out_of_scope
   - not_implemented
+  - consultar_producto
 
 responses:
   utter_saludo:
-  - text: "¡Hola!  ¿en qué te puedo dar una mano hoy? ¿Necesitás ayuda con el diseño de tu NLU, armando unas stories o rules, desarrollando actions personalizadas, o quizás pensando en el despliegue de tu bot?"
+  - text: "¡Hola! ¿En qué te puedo ayudar hoy? Consultá por nuestras bolsas de papel, tamaños, usos o cualquier duda que tengas."
 
   utter_despedida:
-  - text: "Adiós"
+  - text: "¡Adiós! Si necesitás más información, escribinos cuando quieras."
+
+  utter_consultar_producto:
+  - text: |
+      En Madypack ofrecemos bolsas de papel en cuatro variantes:
+      1. Marrón con manijas
+      2. Marrón sin manijas
+      3. Blanco con manijas
+      4. Blanco sin manijas
+      Todas tienen opciones de cantidad mínima y podés consultarnos por impresión personalizada. ¿Querés saber más sobre alguna en particular?
 
 actions:
   - utter_saludo
   - utter_despedida
+  - utter_consultar_producto
   - action_gemini_fallback
 
 session_config:
