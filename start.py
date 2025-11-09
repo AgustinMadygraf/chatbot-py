@@ -20,6 +20,8 @@ RASA_RUN_CMD: List[str] = [
     "*",
     "--model",
     "rasa_project/models",
+    "--endpoints",
+    "rasa_project/endpoints.yml",
     "--port",
     "5005",
     "--debug",
