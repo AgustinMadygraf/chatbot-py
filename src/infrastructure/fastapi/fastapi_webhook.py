@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.shared.logger import get_logger
+from src.shared.logger_rasa_v0 import get_logger
 from src.shared.config import get_config
 
 from src.infrastructure.requests.requests_http_client import RequestsHttpClient

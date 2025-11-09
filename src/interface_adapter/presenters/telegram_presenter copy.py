@@ -2,7 +2,7 @@
 Path: src/interface_adapter/presenters/telegram_presenter.py
 """
 
-from src.shared.logger import get_logger
+from src.shared.logger_rasa_v0 import get_logger
 
 from src.interface_adapter.presenters.markdown_converter import MarkdownConverter
 from src.interface_adapter.presenters.markdown_validator import MarkdownValidator

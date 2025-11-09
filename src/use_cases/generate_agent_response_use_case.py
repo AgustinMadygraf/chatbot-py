@@ -2,7 +2,7 @@
 Path: src/use_cases/generate_agent_response_use_case.py
 """
 
-from src.shared.logger import get_logger
+from src.shared.logger_rasa_v0 import get_logger
 
 from src.entities.message import Message
 

@@ -9,7 +9,7 @@ DEFAULT_SYSTEM_INSTRUCTIONS_PATH = (
     Path(__file__).resolve().parent.parent
     / "infrastructure"
     / "google_generative_ai"
-    / "system_instructions.json.example"
+    / "system_instructions.json"
 )
 
 load_dotenv()
