@@ -2,7 +2,6 @@
 Path: src/infrastructure/fastapi/app_fastapi.py
 """
 
-import os
 from collections import defaultdict
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -99,6 +98,5 @@ def create_app(mode="GOOGLE_GEMINI"):
 
     return fastapi_app
 
-# Exporta la app según el modo de entorno
-_app_mode = os.environ.get("APP_MODE", "GOOGLE_GEMINI")
-app = create_app(_app_mode)
+# Exporta la app principal (sin modo)
+app = create_app()
