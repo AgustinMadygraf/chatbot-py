@@ -61,3 +61,11 @@ nlu:
     - ¿Me contás sobre las bolsas de papel?
     - ¿Qué bolsas de papel tienen con manijas?
     - ¿Tienen bolsas de papel sin manijas?
+
+- intent: responder_entendido
+  examples: |
+    - Esto es una pueba. respondeme con simplemente con un entendido no te extiendas
+    - respondeme con simplemente con un entendido
+    - solo decime entendido
+    - respondé solo con entendido
+    - decime entendido y nada más

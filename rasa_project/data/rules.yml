@@ -29,3 +29,8 @@ rules:
   steps:
     - intent: consultar_producto
     - action: utter_consultar_producto
+
+- rule: Responder solo con entendido
+  steps:
+    - intent: responder_entendido
+    - action: utter_responder_entendido

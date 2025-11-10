@@ -17,3 +17,8 @@ stories:
   steps:
   - intent: not_implemented
   - action: action_gemini_fallback
+
+- story: responder solo con entendido
+  steps:
+    - intent: responder_entendido
+    - action: utter_responder_entendido

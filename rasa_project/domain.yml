@@ -6,6 +6,7 @@ intents:
   - out_of_scope
   - not_implemented
   - consultar_producto
+  - responder_entendido
 
 responses:
   utter_saludo:
@@ -23,11 +24,15 @@ responses:
       4. Blanco sin manijas
       Todas tienen opciones de cantidad mínima y podés consultarnos por impresión personalizada. ¿Querés saber más sobre alguna en particular?
 
+  utter_responder_entendido:
+    - text: "entendido"
+
 actions:
   - utter_saludo
   - utter_despedida
   - utter_consultar_producto
   - action_gemini_fallback
+  - utter_responder_entendido
 
 session_config:
   session_expiration_time: 60
