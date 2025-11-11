@@ -8,6 +8,7 @@ from src.shared.logger_rasa_v0 import get_logger
 
 logger = get_logger("json-instructions-repository")
 
+
 class JsonInstructionsRepository:
     """Repositorio para cargar instrucciones de sistema desde archivos JSON."""
 

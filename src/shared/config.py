@@ -21,8 +21,8 @@ def get_config():
     "Load configuration from environment variables"
 
     config = {
-        "TELEGRAM_API_KEY": os.getenv('TELEGRAM_API_KEY'),
-        "GOOGLE_GEMINI_API_KEY": os.getenv('GOOGLE_GEMINI_API_KEY'),
+        "TELEGRAM_API_KEY": os.getenv("TELEGRAM_API_KEY"),
+        "GOOGLE_GEMINI_API_KEY": os.getenv("GOOGLE_GEMINI_API_KEY"),
     }
     logger.debug(
         "Config cargada | TELEGRAM_KEY=%s | GEMINI_KEY=%s",

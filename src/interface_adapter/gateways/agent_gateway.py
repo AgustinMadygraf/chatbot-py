@@ -54,7 +54,9 @@ class AgentGateway:
     )
 
     def __init__(self, http_client):
-        rasa_url = os.getenv("RASA_REST_URL", "http://localhost:5005/webhooks/rest/webhook")
+        rasa_url = os.getenv(
+            "RASA_REST_URL", "http://localhost:5005/webhooks/rest/webhook"
+        )
         self.agent_bot_url = rasa_url
         self.http_client = http_client
         self._remote_available = not _is_truthy(os.getenv("DISABLE_RASA"))
@@ -89,7 +91,9 @@ class AgentGateway:
                     self.agent_bot_url,
                     len(data) if isinstance(data, list) else 0,
                 )
-                text = " ".join([msg.get("text", "") for msg in data if "text" in msg]).strip()
+                text = " ".join(
+                    [msg.get("text", "") for msg in data if "text" in msg]
+                ).strip()
                 if conversation_id:
                     self._store_turn(conversation_id, "user", message_text)
                     if text:
@@ -153,7 +157,12 @@ class AgentGateway:
             reply = gateway.get_response(prompt, self._system_instructions)
             if isinstance(reply, str) and reply.strip():
                 return reply.strip()
-        except (requests.exceptions.RequestException, ValueError, AttributeError, TypeError) as exc:
+        except (
+            requests.exceptions.RequestException,
+            ValueError,
+            AttributeError,
+            TypeError,
+        ) as exc:
             logger.error("Error en fallback Gemini: %s", exc, exc_info=True)
         return self._FALLBACK_RESPONSE
 
@@ -163,17 +172,35 @@ class AgentGateway:
 
         self._fallback_initialized = True
         try:
-            repository = JsonInstructionsRepository(str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH))
+            repository = JsonInstructionsRepository(
+                str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)
+            )
             use_case = LoadSystemInstructionsUseCase(repository)
             self._system_instructions = use_case.execute()
-        except (FileNotFoundError, PermissionError, OSError, ValueError, TypeError) as exc:
-            logger.error("No se pudieron cargar las instrucciones del sistema: %s", exc, exc_info=True)
+        except (
+            FileNotFoundError,
+            PermissionError,
+            OSError,
+            ValueError,
+            TypeError,
+        ) as exc:
+            logger.error(
+                "No se pudieron cargar las instrucciones del sistema: %s",
+                exc,
+                exc_info=True,
+            )
             self._system_instructions = None
 
         try:
             service = GeminiService()
             self._gemini_gateway = GeminiGateway(service)
-        except (ValueError, TypeError, AttributeError, ImportError, RuntimeError) as exc:
+        except (
+            ValueError,
+            TypeError,
+            AttributeError,
+            ImportError,
+            RuntimeError,
+        ) as exc:
             logger.error("Gemini fallback deshabilitado: %s", exc, exc_info=True)
             self._gemini_gateway = None
 

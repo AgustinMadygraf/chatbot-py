@@ -6,8 +6,10 @@ import logging
 import coloredlogs
 from src.shared.config import get_config
 
+
 class TruncatingColoredFormatter(coloredlogs.ColoredFormatter):
     """Formatter que replica la estética de Rasa CLI y recorta mensajes extensos."""
+
     def __init__(self, *args, max_length=None, **kwargs):
         self.max_length = max_length
         super().__init__(*args, **kwargs)
@@ -25,6 +27,7 @@ class TruncatingColoredFormatter(coloredlogs.ColoredFormatter):
             return super().format(record)
         finally:
             record.msg, record.args = original_msg, original_args
+
 
 def get_logger(name="rasa-bot"):
     "Configura y devuelve un logger con formato estilo Rasa usando coloredlogs."

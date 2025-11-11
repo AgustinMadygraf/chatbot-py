@@ -4,8 +4,10 @@ Path: src/use_cases/load_system_instructions.py
 
 from src.entities.system_instructions import SystemInstructions
 
+
 class LoadSystemInstructionsUseCase:
     "Orquesta la carga de instrucciones de sistema desde un repositorio/gateway."
+
     def __init__(self, instructions_repository):
         self.instructions_repository = instructions_repository
 

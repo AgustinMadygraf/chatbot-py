@@ -12,8 +12,10 @@ from src.entities.gemini_responder import GeminiResponder
 
 logger = get_logger("gemini-service")
 
+
 class GeminiService(GeminiResponder):
     "Servicio para interactuar con el modelo Gemini de Google."
+
     def __init__(self, api_key=None, instructions_json_path=None):
         try:
             config = get_config()
@@ -26,12 +28,22 @@ class GeminiService(GeminiResponder):
             logger.info("GeminiService inicializado correctamente.")
             self.system_instructions = None
             if instructions_json_path:
-                logger.debug("Cargando instrucciones de sistema desde: %s", instructions_json_path)
-                self.system_instructions = self.load_system_instructions_from_json(instructions_json_path)
+                logger.debug(
+                    "Cargando instrucciones de sistema desde: %s",
+                    instructions_json_path,
+                )
+                self.system_instructions = self.load_system_instructions_from_json(
+                    instructions_json_path
+                )
                 if not self.system_instructions:
-                    logger.error("No se pudieron cargar las instrucciones de sistema. El bot funcionará sin ellas.")
+                    logger.error(
+                        "No se pudieron cargar las instrucciones de sistema. El bot funcionará sin ellas."
+                    )
                 else:
-                    logger.debug("Instrucciones de sistema cargadas: %s", self.system_instructions)
+                    logger.debug(
+                        "Instrucciones de sistema cargadas: %s",
+                        self.system_instructions,
+                    )
             else:
                 logger.debug("No se proporcionó ruta para instrucciones de sistema.")
         except Exception as e:
