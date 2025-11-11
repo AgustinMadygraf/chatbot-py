@@ -153,7 +153,7 @@ class AgentGateway:
             reply = gateway.get_response(prompt, self._system_instructions)
             if isinstance(reply, str) and reply.strip():
                 return reply.strip()
-        except Exception as exc:  # pragma: no cover - defensive
+        except (requests.exceptions.RequestException, ValueError, AttributeError, TypeError) as exc:
             logger.error("Error en fallback Gemini: %s", exc, exc_info=True)
         return self._FALLBACK_RESPONSE
 
@@ -166,14 +166,14 @@ class AgentGateway:
             repository = JsonInstructionsRepository(str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH))
             use_case = LoadSystemInstructionsUseCase(repository)
             self._system_instructions = use_case.execute()
-        except Exception as exc:  # pragma: no cover - defensive
+        except (FileNotFoundError, PermissionError, OSError, ValueError, TypeError) as exc:
             logger.error("No se pudieron cargar las instrucciones del sistema: %s", exc, exc_info=True)
             self._system_instructions = None
 
         try:
             service = GeminiService()
             self._gemini_gateway = GeminiGateway(service)
-        except Exception as exc:  # pragma: no cover - defensive
+        except (ValueError, TypeError, AttributeError, ImportError, RuntimeError) as exc:
             logger.error("Gemini fallback deshabilitado: %s", exc, exc_info=True)
             self._gemini_gateway = None
 

@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = src
+
+[report]
+omit =
+    */__init__.py
+    */__pycache__/*
+    tests/*
+    rasa_project/*
+show_missing = True
+skip_covered = True
