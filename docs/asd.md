@@ -1,5 +1,4 @@
-Se puede auditar el proyecto desde varias perspectivas para identificar oportunidades de mejora. Algunas de las más relevantes para tu workspace son:
-
+@workspace 
 1. **Arquitectura y Organización del Código**
    - Revisión de la estructura de carpetas (src, rasa_project/), separación de responsabilidades y cumplimiento de principios SOLID.
    - Consistencia en la nomenclatura y modularidad de componentes (por ejemplo, gateways, controllers, use_cases, presenters).
@@ -33,4 +32,4 @@ Se puede auditar el proyecto desde varias perspectivas para identificar oportuni
    - Revisión de intents, stories y rules en data para detectar lagunas en la cobertura conversacional.
    - Validación de respuestas y acciones personalizadas (rasa_project/actions/actions.py).
 
-Cada una de estas perspectivas puede revelar oportunidades de mejora tanto técnicas como funcionales.
+Dime certezas y dudas. ¿Que mejoras tienen más impacto?
