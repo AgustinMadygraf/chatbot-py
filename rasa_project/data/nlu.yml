@@ -4,13 +4,25 @@ nlu:
 - intent: saludo
   examples: |
     - hola
-    - buenas
     - qué tal
     - hola, ¿qué tal?
     - buenos días
     - buenas tardes
     - buenas noches
     - buen día
+
+- intent: test_bot
+  examples: |
+    - probando bot
+    - esto es una prueba
+    - testeando
+    - test bot
+    - estoy probando el bot
+    - testeo
+    - haciendo un test
+    - prueba de funcionamiento
+    - test superado
+    - comprobando funcionamiento
 
 - intent: despedida
   examples: |

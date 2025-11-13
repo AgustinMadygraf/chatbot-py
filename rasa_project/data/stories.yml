@@ -3,22 +3,27 @@ version: "3.1"
 stories:
 - story: saludo y despedida
   steps:
-  - intent: saludo
-  - action: utter_saludo
-  - intent: despedida
-  - action: utter_despedida
+    - intent: saludo
+    - action: utter_saludo
+    - intent: despedida
+    - action: utter_despedida
 
 - story: fuera de alcance (out_of_scope)
   steps:
-  - intent: out_of_scope
-  - action: action_gemini_fallback
+    - intent: out_of_scope
+    - action: action_gemini_fallback
 
 - story: funcionalidad no implementada (not_implemented)
   steps:
-  - intent: not_implemented
-  - action: action_gemini_fallback
+    - intent: not_implemented
+    - action: action_gemini_fallback
 
-- story: responder solo con entendido
+- story: responder entendido
   steps:
     - intent: responder_entendido
     - action: utter_responder_entendido
+
+- story: test bot
+  steps:
+    - intent: test_bot
+    - action: utter_test_bot

@@ -7,6 +7,7 @@ intents:
   - not_implemented
   - consultar_producto
   - responder_entendido
+  - test_bot
 
 responses:
   utter_saludo:
@@ -27,12 +28,16 @@ responses:
   utter_responder_entendido:
     - text: "entendido"
 
+  utter_test_bot:
+    - text: "test superado con éxito"
+
 actions:
   - utter_saludo
   - utter_despedida
   - utter_consultar_producto
   - action_gemini_fallback
   - utter_responder_entendido
+  - utter_test_bot
 
 session_config:
   session_expiration_time: 60

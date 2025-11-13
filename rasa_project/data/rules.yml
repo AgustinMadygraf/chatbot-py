@@ -1,36 +1,41 @@
 rules:
 
-- rule: Saludo del usuario
+- rule: Saludo
   steps:
-  - intent: saludo
-  - action: utter_saludo
+    - intent: saludo
+    - action: utter_saludo
 
-- rule: Despedida del usuario
+- rule: Despedida
   steps:
-  - intent: despedida
-  - action: utter_despedida
+    - intent: despedida
+    - action: utter_despedida
 
-- rule: Fallback con Gemini
+- rule: NLU fallback
   steps:
     - intent: nlu_fallback
     - action: action_gemini_fallback
 
-- rule: Out of scope con Gemini
+- rule: Out of scope
   steps:
     - intent: out_of_scope
     - action: action_gemini_fallback
 
-- rule: Not implemented con Gemini
+- rule: Not implemented
   steps:
     - intent: not_implemented
     - action: action_gemini_fallback
 
-- rule: Consulta sobre productos
+- rule: Consultar producto
   steps:
     - intent: consultar_producto
     - action: utter_consultar_producto
 
-- rule: Responder solo con entendido
+- rule: Responder entendido
   steps:
     - intent: responder_entendido
     - action: utter_responder_entendido
+
+- rule: Test bot
+  steps:
+    - intent: test_bot
+    - action: utter_test_bot
