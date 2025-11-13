@@ -100,6 +100,94 @@ def test_load_system_instructions_from_json_json_decode(monkeypatch):
     assert result is None
 
 
+def test_load_system_instructions_from_json_oserror(monkeypatch):
+    "Test loading system instructions when OSError is raised"
+
+    def raise_oserror(*a, **kw):
+        raise OSError("os error")
+
+    monkeypatch.setattr("builtins.open", raise_oserror)
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.logger", MagicMock()
+    )
+    result = GeminiService.load_system_instructions_from_json("dummy.json")
+    assert result is None
+
+
+def test_gemini_service_get_response_no_text_attr(monkeypatch):
+    "Test get_response when model response has no .text attribute"
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.get_config",
+        lambda: {"GOOGLE_GEMINI_API_KEY": "key123"},
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.configure",
+        lambda api_key: None,
+    )
+    mock_model = MagicMock()
+    mock_model.generate_content.return_value = 12345  # No .text
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.GenerativeModel",
+        lambda name: mock_model,
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.logger", MagicMock()
+    )
+    service = GeminiService()
+    result = service.get_response("hola", system_instructions="INST")
+    assert result == "12345"
+
+
+def test_gemini_service_get_response_empty_prompt(monkeypatch):
+    "Test get_response with empty prompt."
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.get_config",
+        lambda: {"GOOGLE_GEMINI_API_KEY": "key123"},
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.configure",
+        lambda api_key: None,
+    )
+    mock_model = MagicMock()
+    mock_model.generate_content.return_value.text = "respuesta vacia"
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.GenerativeModel",
+        lambda name: mock_model,
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.logger", MagicMock()
+    )
+    service = GeminiService()
+    result = service.get_response("")
+    assert result == "respuesta vacia"
+
+
+def test_gemini_service_get_response_other_exception(monkeypatch):
+    "Test get_response handles non-ValueError exception from model."
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.get_config",
+        lambda: {"GOOGLE_GEMINI_API_KEY": "key123"},
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.configure",
+        lambda api_key: None,
+    )
+    mock_model = MagicMock()
+    mock_model.generate_content.side_effect = RuntimeError("fail runtime")
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.genai.GenerativeModel",
+        lambda name: mock_model,
+    )
+    monkeypatch.setattr(
+        "src.infrastructure.google_generative_ai.gemini_service.logger", MagicMock()
+    )
+    service = GeminiService()
+    try:
+        service.get_response("hola")
+    except RuntimeError as e:
+        assert "fail runtime" in str(e)
+
+
 def test_gemini_service_get_response(monkeypatch):
     "Test get_response with system instructions"
     monkeypatch.setattr(

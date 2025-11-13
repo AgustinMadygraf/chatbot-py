@@ -1,3 +1,8 @@
+## Cobertura mínima obligatoria
+
+El pipeline de CI/CD exige una cobertura mínima del 70% de líneas y 50% de ramas (branch coverage) para aprobar cualquier cambio. Si la cobertura baja de esos umbrales, el workflow fallará automáticamente.
+
+Puedes ajustar los umbrales en `.coveragerc` con las opciones `fail_under` (líneas) y `fail_under_branch` (ramas).
 ## Dependencias de desarrollo
 
 Para un entorno de desarrollo completo y aislado, utiliza los archivos `requirements-dev.in` y `requirements-dev.txt`:

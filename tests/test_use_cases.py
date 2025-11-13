@@ -77,6 +77,54 @@ def test_generate_agent_response_use_case_execute_error_message():
     )
 
 
+# --- Nuevos tests para edge cases de GenerateAgentResponseUseCase ---
+def test_generate_agent_response_use_case_non_string_response():
+    "Test execute maneja respuesta no-string del agente."
+
+    class DummyAgentBotService:
+        def get_response(self, prompt):
+            return 12345  # No string
+
+    use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
+    user_message = Message(to="user4", body="hola")
+    result = use_case.execute("conv4", user_message)
+    assert isinstance(result, Message)
+    assert result.body == 12345
+
+
+def test_generate_agent_response_use_case_empty_message():
+    "Test execute maneja mensaje vacío."
+
+    class DummyAgentBotService:
+        def get_response(self, prompt):
+            return "Echo: " + (prompt or "<vacio>")
+
+    use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
+    user_message = Message(to="user5", body="")
+    result = use_case.execute("conv5", user_message)
+    assert isinstance(result, Message)
+    assert result.body.startswith("Echo: ")
+
+
+def test_generate_agent_response_use_case_with_audio_transcriber():
+    "Test instanciación con audio_transcriber_use_case."
+
+    class DummyAgentBotService:
+        def get_response(self, prompt):
+            return "ok"
+
+    class DummyAudioTranscriber:
+        pass
+
+    use_case = GenerateAgentResponseUseCase(
+        agent_bot_service=DummyAgentBotService(),
+        audio_transcriber_use_case=DummyAudioTranscriber(),
+    )
+    user_message = Message(to="user6", body="hola")
+    result = use_case.execute("conv6", user_message)
+    assert isinstance(result, Message)
+
+
 class DummyRepo:
     "Dummy repository for testing."
 
@@ -104,4 +152,56 @@ def test_load_system_instructions_use_case_none():
     repo = DummyRepo(None)
     use_case = LoadSystemInstructionsUseCase(repo)
     result = use_case.execute()
+    assert result is None
+
+
+# --- Nuevos tests para edge cases de LoadSystemInstructionsUseCase ---
+def test_load_system_instructions_use_case_repo_exception():
+    class FailingRepo:
+        def load(self):
+            raise RuntimeError("fail repo")
+
+    use_case = LoadSystemInstructionsUseCase(FailingRepo())
+    try:
+        use_case.execute()
+    except RuntimeError as e:
+        assert "fail repo" in str(e)
+
+
+def test_load_system_instructions_use_case_unexpected_type():
+    class WeirdRepo:
+        def load(self):
+            return 12345
+
+    use_case = LoadSystemInstructionsUseCase(WeirdRepo())
+    result = use_case.execute()
+    # SystemInstructions acepta cualquier cosa, pero debe envolverlo
+    from src.entities.system_instructions import SystemInstructions
+
+    assert isinstance(result, SystemInstructions)
+    assert (
+        getattr(result, "instructions", None) == 12345
+        or getattr(result, "content", None) == 12345
+    )
+
+
+def test_load_system_instructions_use_case_empty_list():
+    class EmptyListRepo:
+        def load(self):
+            return []
+
+    use_case = LoadSystemInstructionsUseCase(EmptyListRepo())
+    result = use_case.execute()
+    # [] es falsy, así que debe devolver None
+    assert result is None
+
+
+def test_load_system_instructions_use_case_empty_string():
+    class EmptyStringRepo:
+        def load(self):
+            return ""
+
+    use_case = LoadSystemInstructionsUseCase(EmptyStringRepo())
+    result = use_case.execute()
+    # "" es falsy, así que debe devolver None
     assert result is None

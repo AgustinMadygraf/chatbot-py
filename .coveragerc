@@ -10,3 +10,5 @@ omit =
     rasa_project/*
 show_missing = True
 skip_covered = True
+fail_under = 70
+fail_under_branch = 50

@@ -244,3 +244,38 @@ def test_agent_gateway_is_truthy_cases():
     assert not _is_truthy("false")
     assert not _is_truthy(None)
     assert not _is_truthy("")
+
+
+# --- Nuevos tests para _build_prompt y _store_turn ---
+def test_agent_gateway_build_prompt_empty_history():
+    gateway = AgentGateway(http_client=None)
+    prompt = gateway._build_prompt("conv1", "mensaje final")
+    assert prompt.startswith("Usuario: mensaje final") or "Gemini:" in prompt
+
+
+def test_agent_gateway_build_prompt_with_history():
+    gateway = AgentGateway(http_client=None)
+    # Simular historial de 3 turnos
+    gateway._store_turn("conv2", "user", "hola")
+    gateway._store_turn("conv2", "bot", "respuesta1")
+    gateway._store_turn("conv2", "user", "¿cómo estás?")
+    prompt = gateway._build_prompt("conv2", "mensaje final")
+    # Debe contener los turnos previos y el mensaje final
+    assert "Usuario: hola" in prompt
+    assert "Gemini: respuesta1" in prompt
+    assert "Usuario: ¿cómo estás?" in prompt
+    assert "Usuario: mensaje final" in prompt
+    assert prompt.endswith("Gemini:")
+
+
+def test_agent_gateway_store_turn_limit():
+    gateway = AgentGateway(http_client=None)
+    conv_id = "conv3"
+    # Agregar 25 turnos, debe recortar a 20
+    for i in range(25):
+        gateway._store_turn(conv_id, "user", f"msg{i}")
+    with gateway._history_lock:
+        history = gateway._history[conv_id]
+    assert len(history) == 20
+    # El primer mensaje debe ser msg5
+    assert history[0][1] == "msg5"

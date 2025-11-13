@@ -33,3 +33,49 @@
    - Validación de respuestas y acciones personalizadas (rasa_project/actions/actions.py).
 
 Dime certezas y dudas. ¿Que mejoras tienen más impacto?
+
+
+
+
+
+
+
+
+
+
+
+@workspace 
+Quiero que ahora hagas un análisis de 
+`[tarea de mamyor impacto]`
+desde distintos puntos de vistas. Indiqués cuáles son las certezas y las dudas. Intentes responder las dudas en base a evidencia. Indiques cuáles son las nuevas certezas. Cuál es el Listado de Tareas Para Hacer.
+Archivos involucrados. Como implementar esas tareas sin romper producción. Aún no proporciones código
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Si tenés dudas, procede a formular preguntas e intentar responderlas. Si tenés certezas, procede a modificar y/o crear los archivos correspondientes
+
+
+
+
+
+
+
+
+
+
+
+De las tareas por hacer, ¿Que tareas se han realizado y cuáles están en proceso/pendientes?
+Procede con la siguiente tarea pendiente.
