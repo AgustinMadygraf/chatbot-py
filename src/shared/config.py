@@ -17,13 +17,13 @@ load_dotenv()
 logger = logging.getLogger("config")
 
 
-
 def _parse_bool(val, default=False):
     if val is None:
         return default
     if isinstance(val, bool):
         return val
     return str(val).strip().lower() in ("1", "true", "yes", "on")
+
 
 def get_config():
     """
@@ -34,16 +34,28 @@ def get_config():
 
     # TELEGRAM_API_KEY (obligatorio)
     telegram_key = os.getenv("TELEGRAM_API_KEY")
-    if not telegram_key or not isinstance(telegram_key, str) or len(telegram_key.strip()) < 10:
+    if (
+        not telegram_key
+        or not isinstance(telegram_key, str)
+        or len(telegram_key.strip()) < 10
+    ):
         logger.error("TELEGRAM_API_KEY es obligatorio y debe ser un string válido.")
         raise ValueError("TELEGRAM_API_KEY es obligatorio y debe ser un string válido.")
     config["TELEGRAM_API_KEY"] = telegram_key.strip()
 
     # GOOGLE_GEMINI_API_KEY (obligatorio)
     gemini_key = os.getenv("GOOGLE_GEMINI_API_KEY")
-    if not gemini_key or not isinstance(gemini_key, str) or len(gemini_key.strip()) < 10:
-        logger.error("GOOGLE_GEMINI_API_KEY es obligatorio y debe ser un string válido.")
-        raise ValueError("GOOGLE_GEMINI_API_KEY es obligatorio y debe ser un string válido.")
+    if (
+        not gemini_key
+        or not isinstance(gemini_key, str)
+        or len(gemini_key.strip()) < 10
+    ):
+        logger.error(
+            "GOOGLE_GEMINI_API_KEY es obligatorio y debe ser un string válido."
+        )
+        raise ValueError(
+            "GOOGLE_GEMINI_API_KEY es obligatorio y debe ser un string válido."
+        )
     config["GOOGLE_GEMINI_API_KEY"] = gemini_key.strip()
 
     # RASA_REST_URL (opcional)
