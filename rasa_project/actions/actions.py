@@ -10,12 +10,15 @@ from pathlib import Path
 from src.shared.config import DEFAULT_SYSTEM_INSTRUCTIONS_PATH
 from src.shared.logger_rasa_v0 import get_logger
 
-from src.infrastructure.repositories.json_instructions_repository import JsonInstructionsRepository
+from src.infrastructure.repositories.json_instructions_repository import (
+    JsonInstructionsRepository,
+)
 from src.infrastructure.google_generative_ai.gemini_service import GeminiService
 from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
 from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
 
 logger = get_logger("action-gemini-fallback")
+
 
 def build_history_from_tracker(tracker: Tracker, max_turns: int = 10) -> str:
     "Construir el historial de conversación desde el tracker"
@@ -36,12 +39,16 @@ def build_history_from_tracker(tracker: Tracker, max_turns: int = 10) -> str:
 
 class ActionGeminiFallback(Action):
     "Fallback action for Gemini"
+
     def name(self) -> Text:
         return "action_gemini_fallback"
 
-    async def run(self, dispatcher: CollectingDispatcher,
+    async def run(
+        self,
+        dispatcher: CollectingDispatcher,
         tracker: Tracker,
-        domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
         "Fallback action for Gemini"
         # Construir historial
         history = build_history_from_tracker(tracker, max_turns=10)
@@ -68,7 +75,9 @@ class ActionGeminiFallback(Action):
                 )
 
             instructions_repository = JsonInstructionsRepository(instructions_path)
-            load_instructions_use_case = LoadSystemInstructionsUseCase(instructions_repository)
+            load_instructions_use_case = LoadSystemInstructionsUseCase(
+                instructions_repository
+            )
             system_instructions = load_instructions_use_case.execute()
             logger.debug("Instrucciones cargadas=%s", bool(system_instructions))
 

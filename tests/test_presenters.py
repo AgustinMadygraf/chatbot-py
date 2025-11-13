@@ -37,7 +37,11 @@ def test_telegram_message_presenter_invalid_markdown(monkeypatch):
     presenter = TelegramMessagePresenter()
     msg = Message(to="user", body="*texto desbalanceado")
     # Forzar MarkdownValidator a lanzar ValueError
-    monkeypatch.setattr(presenter.validator, "validate", lambda t: (_ for _ in ()).throw(ValueError("desbalanceado")))
+    monkeypatch.setattr(
+        presenter.validator,
+        "validate",
+        lambda t: (_ for _ in ()).throw(ValueError("desbalanceado")),
+    )
     result = presenter.present(msg)
     assert result[0]["parse_mode"] is None
     assert "texto desbalanceado" in result[0]["text"]

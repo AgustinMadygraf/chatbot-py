@@ -1,7 +1,15 @@
-# --- Cobertura de excepciones en _ensure_fallback_components y _fallback_response ---
+"""
+Path: tests/test_gateways.py
+"""
 
 import pytest
+
 from src.infrastructure.repositories.json_instructions_repository import JsonInstructionsRepository
+from src.interface_adapter.gateways.agent_gateway import AgentGateway
+from src.entities.message import Message
+from unittest.mock import MagicMock
+from src.interface_adapter.gateways.agent_gateway import AgentGateway
+
 
 def test_agent_gateway_ensure_fallback_components_exceptions(monkeypatch):
     gateway = AgentGateway(http_client=None)
@@ -24,19 +32,11 @@ def test_agent_gateway_fallback_response_exception(monkeypatch):
     monkeypatch.setattr(gateway, "_ensure_fallback_components", lambda: DummyGateway())
     resp = gateway._fallback_response("conv1", "mensaje")
     assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
-"""
-Path: tests/test_gateways.py
-"""
-
-from unittest.mock import MagicMock
-from src.interface_adapter.gateways.agent_gateway import AgentGateway
-
 
 def test_agent_gateway_init():
     "Test initialization of AgentGateway."
     gateway = AgentGateway(http_client=MagicMock())
     assert gateway is not None
-
 
 def test_agent_gateway_get_response_success():
     "Test get_response returns text from Rasa when available."
@@ -46,7 +46,6 @@ def test_agent_gateway_get_response_success():
     gateway = AgentGateway(http_client=mock_http)
     response = gateway.get_response("hola")
     assert "Hola" in response
-
 
 def test_agent_gateway_get_response_rasa_error_fallback(monkeypatch):
     "Test get_response uses fallback when Rasa is unavailable."
@@ -122,11 +121,6 @@ def test_agent_gateway_fallback_response_with_gateway(monkeypatch):
     assert "gemini" in result
 
 
-# --- Nuevos tests para AgentGateway: cobertura de caminos locales y fallback ---
-from src.interface_adapter.gateways.agent_gateway import AgentGateway
-
-# Para pruebas directas de métodos internos y _is_truthy
-from src.entities.message import Message
 
 class DummyHttpClient:
     "Dummy HTTP client for testing."

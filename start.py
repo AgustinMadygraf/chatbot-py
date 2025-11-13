@@ -62,7 +62,10 @@ def _should_start_rasa(env: Dict[str, str]) -> Tuple[bool, str]:
 
     rasa_binary = RASA_RUN_CMD[0]
     if shutil.which(rasa_binary, path=env.get("PATH")) is None:
-        print(f"Command '{rasa_binary}' not found. Skipping Rasa startup.", file=sys.stderr)
+        print(
+            f"Command '{rasa_binary}' not found. Skipping Rasa startup.",
+            file=sys.stderr,
+        )
         return False, ""
 
     model_value = env.get("RASA_MODEL_PATH", "rasa_project/models")
@@ -80,13 +83,17 @@ def _should_start_rasa(env: Dict[str, str]) -> Tuple[bool, str]:
 
 
 def _should_start_actions(env: Dict[str, str]) -> bool:
-    if _is_truthy(env.get("DISABLE_RASA_ACTIONS")) or _is_truthy(env.get("SKIP_RASA_ACTIONS")):
+    if _is_truthy(env.get("DISABLE_RASA_ACTIONS")) or _is_truthy(
+        env.get("SKIP_RASA_ACTIONS")
+    ):
         print("Rasa actions server disabled via environment variable.", file=sys.stderr)
         return False
     return True
 
 
-def _build_process_plan(env: Dict[str, str]) -> Tuple[List[Tuple[str, List[str]]], Tuple[str, List[str]]]:
+def _build_process_plan(
+    env: Dict[str, str]
+) -> Tuple[List[Tuple[str, List[str]]], Tuple[str, List[str]]]:
     background: List[Tuple[str, List[str]]] = []
     start_rasa, model_path = _should_start_rasa(env)
     if start_rasa:
@@ -94,7 +101,10 @@ def _build_process_plan(env: Dict[str, str]) -> Tuple[List[Tuple[str, List[str]]
         if _should_start_actions(env):
             background.append(("actions", RASA_ACTIONS_CMD))
     else:
-        print("Rasa services will not be started; using FastAPI webhook only.", file=sys.stderr)
+        print(
+            "Rasa services will not be started; using FastAPI webhook only.",
+            file=sys.stderr,
+        )
 
     foreground: Tuple[str, List[str]] = ("uvicorn", UVICORN_CMD)
     return background, foreground

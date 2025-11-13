@@ -1,7 +1,8 @@
 """
 Path: tests/test_entities.py
 """
-
+import pytest
+from src.entities.gemini_responder import GeminiResponder
 from src.entities.message import Message
 
 def test_message_creation():
@@ -10,12 +11,8 @@ def test_message_creation():
     assert msg.to == "user"
     assert msg.body == "Hola"
 
-
-# Test para GeminiResponder: get_response debe lanzar NotImplementedError
-import pytest
-from src.entities.gemini_responder import GeminiResponder
-
 def test_gemini_responder_get_response_not_implemented():
+    "Test para GeminiResponder: get_response debe lanzar NotImplementedError"
     responder = GeminiResponder()
     with pytest.raises(NotImplementedError):
         responder.get_response("prompt")

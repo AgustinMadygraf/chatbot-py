@@ -27,7 +27,9 @@ class GeminiGateway(GeminiResponder):
         # Si se pasa una instancia de SystemInstructions, extrae el contenido de forma segura
         if isinstance(system_instructions, SystemInstructions):
             # Usa 'content' o 'instructions' según el atributo real
-            content = getattr(system_instructions, "content", None) or getattr(system_instructions, "instructions", None)
+            content = getattr(system_instructions, "content", None) or getattr(
+                system_instructions, "instructions", None
+            )
             if isinstance(content, list):
                 instructions_content = ", ".join(map(str, content))
             else:

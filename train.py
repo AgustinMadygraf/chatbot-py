@@ -19,11 +19,16 @@ if os.path.exists(models_dir):
 
 # Comando de entrenamiento
 cmd = [
-    "rasa", "train",
-    "--config", config_path,
-    "--domain", domain_path,
-    "--data", data_path,
-    "--out", models_dir
+    "rasa",
+    "train",
+    "--config",
+    config_path,
+    "--domain",
+    domain_path,
+    "--data",
+    data_path,
+    "--out",
+    models_dir,
 ]
 
 # Ejecutar el comando

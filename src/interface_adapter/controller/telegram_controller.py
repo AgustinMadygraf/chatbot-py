@@ -4,6 +4,7 @@ Path: src/interface_adapter/controller/telegram_controller.py
 
 from src.entities.message import Message
 
+
 class TelegramMessageController:
     "Controlador para manejar mensajes entrantes de Telegram usando Rasa."
 

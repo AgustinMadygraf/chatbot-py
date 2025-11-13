@@ -1,15 +1,11 @@
 """
 Path: 
 """
-
 from __future__ import annotations
-
 import os
 import threading
 from typing import Dict, List, Optional, Tuple
-
 import requests
-
 from src.entities.message import Message
 from src.infrastructure.google_generative_ai.gemini_service import GeminiService
 from src.infrastructure.repositories.json_instructions_repository import (
