@@ -1,0 +1,11 @@
+-r requirements.in
+# Dependencias solo para desarrollo
+devtools
+pytest
+pytest-benchmark
+flake8
+black
+coverage
+pip-tools
+safety
+codecov

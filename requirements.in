@@ -1,0 +1,15 @@
+rasa==3.6.21
+protobuf>=4.23.3,<4.23.4
+google-generativeai
+fastapi
+uvicorn
+httpx
+requests
+python-dotenv
+black
+flake8
+coverage
+packaging>=20.0,<21.0
+pytest
+pytest-benchmark
+pip-tools
