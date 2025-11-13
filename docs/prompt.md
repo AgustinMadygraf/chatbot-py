@@ -75,7 +75,5 @@ Si tenés dudas, procede a formular preguntas e intentar responderlas. Si tenés
 
 
 
-
-
 De las tareas por hacer, ¿Que tareas se han realizado y cuáles están en proceso/pendientes?
 Procede con la siguiente tarea pendiente.
