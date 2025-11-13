@@ -8,6 +8,8 @@ from src.interface_adapter.gateways.agent_gateway import AgentGateway
 
 @pytest.mark.benchmark
 def test_agent_gateway_local_response_benchmark(benchmark):
+    "Benchmark for AgentGateway local response."
     gateway = AgentGateway(http_client=None)
+    # _local_response espera (conversation_id, message_text)
     result = benchmark(gateway._local_response, "conv1", "hola")
     assert "Hola" in result

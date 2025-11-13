@@ -1,3 +1,29 @@
+# --- Cobertura de excepciones en _ensure_fallback_components y _fallback_response ---
+
+import pytest
+from src.infrastructure.repositories.json_instructions_repository import JsonInstructionsRepository
+
+def test_agent_gateway_ensure_fallback_components_exceptions(monkeypatch):
+    gateway = AgentGateway(http_client=None)
+    gateway._fallback_initialized = False
+    # Monkeypatch el __init__ y load de la clase real
+    monkeypatch.setattr(JsonInstructionsRepository, "__init__", lambda self, path, key="instructions": None)
+    monkeypatch.setattr(JsonInstructionsRepository, "load", lambda self: (_ for _ in ()).throw(FileNotFoundError("no file")))
+    # No debe lanzar excepción, sin importar el valor retornado
+    try:
+        gateway._ensure_fallback_components()
+    except FileNotFoundError:
+        pytest.fail("FileNotFoundError fue propagado, pero debía ser manejado internamente.")
+
+def test_agent_gateway_fallback_response_exception(monkeypatch):
+    gateway = AgentGateway(http_client=None)
+    # Forzar que el gateway devuelva un objeto que lanza excepción
+    class DummyGateway:
+        def get_response(self, prompt, system_instructions=None):
+            raise ValueError("fail")
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", lambda: DummyGateway())
+    resp = gateway._fallback_response("conv1", "mensaje")
+    assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
 """
 Path: tests/test_gateways.py
 """
@@ -94,3 +120,74 @@ def test_agent_gateway_fallback_response_with_gateway(monkeypatch):
     monkeypatch.setattr(gateway, '_system_instructions', None)
     result = gateway.get_response("test")
     assert "gemini" in result
+
+
+# --- Nuevos tests para AgentGateway: cobertura de caminos locales y fallback ---
+from src.interface_adapter.gateways.agent_gateway import AgentGateway
+
+# Para pruebas directas de métodos internos y _is_truthy
+from src.entities.message import Message
+
+class DummyHttpClient:
+    "Dummy HTTP client for testing."
+    def post(self, *a, **kw):
+        class DummyResp:
+            def json(self): return [{"text": "Hola!"}]
+            def raise_for_status(self): return None
+        return DummyResp()
+
+def test_agent_gateway_internal_local_response_saludo():
+    gateway = AgentGateway(http_client=None)
+    resp = gateway._local_response("conv1", "hola")
+    assert "hola" in resp.lower()
+
+def test_agent_gateway_internal_local_response_despedida():
+    gateway = AgentGateway(http_client=None)
+    resp = gateway._local_response("conv1", "adios")
+    assert "adios" in resp.lower() or "adiós" in resp.lower()
+
+def test_agent_gateway_internal_local_response_fallback(monkeypatch):
+    gateway = AgentGateway(http_client=None)
+    monkeypatch.setattr(gateway, "_fallback_response", lambda c, m: "fallback called")
+    resp = gateway._local_response("conv1", "mensaje desconocido")
+    assert "fallback called" in resp
+
+def test_agent_gateway_fallback_response_gateway_none(monkeypatch):
+    gateway = AgentGateway(http_client=None)
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", lambda: None)
+    resp = gateway._fallback_response("conv1", "mensaje")
+    assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
+
+def test_agent_gateway_fallback_response_gateway_error(monkeypatch):
+    gateway = AgentGateway(http_client=None)
+    class DummyGateway:
+        def get_response(self, prompt, system_instructions=None):
+            raise ValueError("fail")
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", lambda: DummyGateway())
+    resp = gateway._fallback_response("conv1", "mensaje")
+    assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
+
+# --- Nuevos tests para cobertura interna de AgentGateway ---
+def test_agent_gateway_build_payload_str():
+    gateway = AgentGateway(http_client=None)
+    payload, conv_id = gateway._build_payload("hola")
+    assert payload["message"] == "hola"
+    assert isinstance(conv_id, str)
+
+def test_agent_gateway_build_payload_message():
+    gateway = AgentGateway(http_client=None)
+    msg = Message(to="conv1", body="hola body")
+    payload, conv_id = gateway._build_payload(msg)
+    assert payload["message"] == "hola body"
+    assert conv_id == "conv1"
+
+def test_agent_gateway_is_truthy_cases():
+    from src.interface_adapter.gateways.agent_gateway import _is_truthy
+    assert _is_truthy("1")
+    assert _is_truthy("true")
+    assert _is_truthy("yes")
+    assert _is_truthy("on")
+    assert not _is_truthy("0")
+    assert not _is_truthy("false")
+    assert not _is_truthy(None)
+    assert not _is_truthy("")

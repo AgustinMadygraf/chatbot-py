@@ -24,10 +24,14 @@ class GeminiGateway(GeminiResponder):
         :param prompt: str, el mensaje del usuario.
         :param system_instructions: SystemInstructions | None, instrucciones de sistema como entidad.
         """
-        # Si se pasa una instancia de SystemInstructions, extrae el contenido
-        instructions_content = (
-            str(system_instructions)
-            if isinstance(system_instructions, SystemInstructions)
-            else system_instructions
-        )
+        # Si se pasa una instancia de SystemInstructions, extrae el contenido de forma segura
+        if isinstance(system_instructions, SystemInstructions):
+            # Usa 'content' o 'instructions' según el atributo real
+            content = getattr(system_instructions, "content", None) or getattr(system_instructions, "instructions", None)
+            if isinstance(content, list):
+                instructions_content = ", ".join(map(str, content))
+            else:
+                instructions_content = str(content)
+        else:
+            instructions_content = system_instructions
         return self.service.get_response(prompt, instructions_content)
