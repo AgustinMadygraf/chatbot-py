@@ -1,4 +1,3 @@
-
 """
 Path: tests/test_use_cases.py
 """
@@ -77,8 +76,10 @@ def test_generate_agent_response_use_case_execute_error_message():
         or "comuníquese con el área de mantenimiento" in result.body
     )
 
+
 class DummyRepo:
-    " Dummy repository for testing."
+    "Dummy repository for testing."
+
     def __init__(self, content):
         self._content = content
 
