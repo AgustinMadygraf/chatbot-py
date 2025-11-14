@@ -13,5 +13,5 @@ packaging>=20.0,<21.0
 pytest
 pytest-benchmark
 pip-tools
-pip
-setuptools
+pip==24.0
+setuptools==70.3.0
