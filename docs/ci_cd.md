@@ -1,8 +1,28 @@
+## Compatibilidad y entorno Python
+
+**Versión recomendada:** Python 3.10.x
+
+- El proyecto requiere Python 3.10 para garantizar compatibilidad con Rasa 3.6.x y evitar errores de instalación en Railway y CI/CD.
+- No es compatible con Python 3.12+.
+- Railway y CI usan la versión especificada en `runtime.txt` (ejemplo: `python-3.10.14`).
+- Si usas Windows, se recomienda usar WSL2 (Ubuntu) para gestionar dependencias y evitar problemas de paquetes exclusivos de Windows (ej: `pywin32`).
+
 ## Cobertura mínima obligatoria
 
 El pipeline de CI/CD exige una cobertura mínima del 70% de líneas y 50% de ramas (branch coverage) para aprobar cualquier cambio. Si la cobertura baja de esos umbrales, el workflow fallará automáticamente.
 
 Puedes ajustar los umbrales en `.coveragerc` con las opciones `fail_under` (líneas) y `fail_under_branch` (ramas).
+## Flujo multiplataforma para dependencias
+
+**Importante:** Para evitar errores de instalación en Railway y otros entornos Linux, **siempre genera `requirements.txt` y `requirements-dev.txt` en un entorno Linux** (idealmente WSL2 o una VM Ubuntu). Esto previene la inclusión de dependencias exclusivas de Windows.
+
+### Pasos recomendados:
+1. Usa WSL2/Ubuntu o una VM Linux para gestionar dependencias.
+2. Instala [pyenv](https://github.com/pyenv/pyenv) para obtener la versión exacta de Python (ej: 3.10.14).
+3. Crea y activa un entorno virtual limpio.
+4. Instala `pip-tools` y compila los archivos `.txt` desde los `.in`.
+5. Haz commit de los archivos generados.
+
 ## Dependencias de desarrollo
 
 Para un entorno de desarrollo completo y aislado, utiliza los archivos `requirements-dev.in` y `requirements-dev.txt`:
@@ -28,6 +48,7 @@ pip install pip-tools
 ```
 
 Esto permitirá compilar y actualizar `requirements.txt` a partir de `requirements.in` siguiendo el flujo documentado más arriba.
+
 # CI/CD y DevOps
 
 ## Proveedores
@@ -63,21 +84,32 @@ Esto permitirá compilar y actualizar `requirements.txt` a partir de `requiremen
 
 ### Uso de pip-tools para mantener requirements.txt
 
-1. Instalar pip-tools localmente:
+1. Instala pip-tools en el entorno Linux:
 	```sh
 	pip install pip-tools
 	```
-2. Editar `requirements.in` para agregar/quitar dependencias.
-3. Generar/actualizar `requirements.txt` ejecutando:
+2. Edita `requirements.in` para agregar/quitar dependencias.
+3. **Asegúrate de incluir y fijar versiones de `pip` y `setuptools` en `requirements.in`** (ejemplo: `pip==24.0`, `setuptools==70.3.0`) para evitar advertencias y errores de hash en CI/CD.
+4. Genera/actualiza `requirements.txt` ejecutando:
 	```sh
 	pip-compile requirements.in
 	```
-4. (Opcional) Para actualizar todas las dependencias a la última versión compatible:
+5. (Opcional) Para actualizar todas las dependencias a la última versión compatible:
 	```sh
 	pip-compile --upgrade requirements.in
 	```
-5. Hacer commit de ambos archivos (`requirements.in` y `requirements.txt`).
-6. Validar los cambios con CI antes de mergear a main.
+6. Haz commit de ambos archivos (`requirements.in` y `requirements.txt`).
+7. Valida los cambios con CI antes de mergear a main.
+
+#### Troubleshooting común
+
+- **Error de hash mismatch en pip:**
+	- Asegúrate de compilar los requirements en Linux y de que todas las dependencias estén fijadas correctamente.
+	- Verifica que no haya dependencias exclusivas de Windows (ej: `pywin32`).
+- **Error de incompatibilidad de versión de Python:**
+	- Railway y CI requieren Python 3.10.x. Verifica `runtime.txt` y tu entorno local.
+- **Advertencia de pip/setuptools no fijados:**
+	- Añade `pip==24.0` y `setuptools==70.3.0` en `requirements.in`.
 
 ## Buenas prácticas para PRs de dependencias
 
@@ -86,8 +118,20 @@ Esto permitirá compilar y actualizar `requirements.txt` a partir de `requiremen
 - El pipeline de CI fallará si los archivos `.txt` no están sincronizados con los `.in`.
 
 ## Rollback y monitoreo
-- [Explicar lo que ofrece Railway y cómo se usa]
+
+### Railway
+
+- Railway permite hacer rollback a despliegues anteriores desde su dashboard web.
+- Cada despliegue queda registrado y puede revertirse manualmente si se detecta un fallo en producción.
+- Consulta la [documentación oficial de Railway](https://docs.railway.app/deploy/deployments#rollback) para detalles y mejores prácticas.
+
+### Monitoreo
+
+- Railway ofrece logs en tiempo real y métricas básicas desde el dashboard.
+- Se recomienda monitorear errores críticos y fallos de arranque desde la interfaz de Railway y configurar alertas si es necesario.
 
 ## Enlaces útiles
 - [Workflow de GitHub Actions](../.github/workflows/)
 - [Documentación Railway](https://docs.railway.app/)
+- [pyenv: gestión de versiones Python](https://github.com/pyenv/pyenv)
+- [pip-tools: gestión de dependencias](https://github.com/jazzband/pip-tools)
