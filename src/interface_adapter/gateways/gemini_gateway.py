@@ -7,24 +7,14 @@ from src.entities.system_instructions import SystemInstructions
 
 
 class GeminiGateway(GeminiResponder):
-    """
-    Gateway para interactuar con un servicio de modelo generativo (Gemini).
-    No depende de infrastructure, solo de la entidad.
-    """
+    "Puente entre el servicio Gemini y la interfaz del gateway."
 
     def __init__(self, service):
-        """
-        :param service: Instancia de un servicio que implemente get_response(prompt, system_instructions)
-        """
+        "Inicializa el gateway con el servicio Gemini proporcionado."
         self.service = service
 
     def get_response(self, prompt, system_instructions: SystemInstructions = None):
-        """
-        Llama al servicio subyacente para obtener una respuesta.
-        :param prompt: str, el mensaje del usuario.
-        :param system_instructions: SystemInstructions | None, instrucciones de sistema como entidad.
-        """
-        # Si se pasa una instancia de SystemInstructions, extrae el contenido de forma segura
+        "Obtiene una respuesta del servicio Gemini utilizando el prompt y las instrucciones del sistema."
         if isinstance(system_instructions, SystemInstructions):
             # Usa 'content' o 'instructions' según el atributo real
             content = getattr(system_instructions, "content", None) or getattr(

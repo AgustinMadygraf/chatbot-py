@@ -4,13 +4,14 @@ Path: src/infrastructure/repositories/json_instructions_repository.py
 
 import json
 from pathlib import Path
+
 from src.shared.logger_rasa_v0 import get_logger
 
 logger = get_logger("json-instructions-repository")
 
 
 class JsonInstructionsRepository:
-    """Repositorio para cargar instrucciones de sistema desde archivos JSON."""
+    "Repositorio para cargar instrucciones de sistema desde archivos JSON."
 
     def __init__(self, json_path, key="instructions"):
         self.json_path = json_path
@@ -22,7 +23,7 @@ class JsonInstructionsRepository:
         )
 
     def _resolve_json_path(self):
-        """Intenta resolver la ruta del JSON relativa a la raíz del proyecto."""
+        "Intenta resolver la ruta del JSON relativa a la raíz del proyecto."
         candidate = Path(self.json_path)
         logger.debug(
             "Intentando resolver ruta JSON | original=%s | absoluta=%s | existe=%s",
@@ -58,7 +59,7 @@ class JsonInstructionsRepository:
         return None
 
     def load(self):
-        """Carga instrucciones desde un archivo JSON."""
+        "Carga instrucciones desde un archivo JSON."
         resolved_path = self._resolve_json_path()
         if not resolved_path:
             logger.debug("Resolución de ruta fallida | json_path=%s", self.json_path)

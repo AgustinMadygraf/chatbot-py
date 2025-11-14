@@ -17,6 +17,10 @@ from src.interface_adapter.controller.telegram_controller import (
 )
 from src.interface_adapter.controller.webchat_controller import WebchatMessageController
 from src.interface_adapter.gateways.agent_gateway import AgentGateway
+from src.infrastructure.repositories.json_instructions_repository import (
+    JsonInstructionsRepository,
+)
+from src.infrastructure.google_generative_ai.gemini_service import GeminiService
 from src.interface_adapter.presenters.telegram_presenter import TelegramMessagePresenter
 from src.use_cases.generate_agent_response_use_case import GenerateAgentResponseUseCase
 from src.entities.message import Message
@@ -28,7 +32,21 @@ TELEGRAM_TOKEN = config.get("TELEGRAM_API_KEY")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
 TELEGRAM_MESSAGE_DELAY = config.get("TELEGRAM_MESSAGE_DELAY", 0.5)
 
-agent_bot_service = AgentGateway(http_client=None)  # http_client ya no es necesario
+instructions_repository = JsonInstructionsRepository(
+    str(
+        config.get(
+            "SYSTEM_INSTRUCTIONS_PATH",
+            "src/infrastructure/google_generative_ai/system_instructions.json",
+        )
+    )
+)
+gemini_service = GeminiService()
+
+agent_bot_service = AgentGateway(
+    http_client=requests.Session(),
+    instructions_repository=instructions_repository,
+    gemini_service=gemini_service,
+)
 telegram_presenter = TelegramMessagePresenter()
 
 # Inyectar el caso de uso de transcripción en GenerateAgentResponseUseCase
