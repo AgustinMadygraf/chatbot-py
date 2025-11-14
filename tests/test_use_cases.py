@@ -4,13 +4,16 @@ from src.entities.system_instructions import SystemInstructions
 from src.use_cases.generate_agent_response_use_case import GenerateAgentResponseUseCase
 from src.entities.message import Message
 
+
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_instantiation():
     "Test instantiation of GenerateAgentResponseUseCase."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             _ = prompt
             return "ok"
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     assert use_case is not None
 
@@ -18,9 +21,11 @@ async def test_generate_agent_response_use_case_instantiation():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_execute_text():
     "Test execute returns Message with agent response for text input."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             return f"Echo: {prompt}"
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     user_message = Message(to="user1", body="hola")
     result = await use_case.execute("conv1", user_message)
@@ -31,9 +36,11 @@ async def test_generate_agent_response_use_case_execute_text():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_execute_prompt():
     "Test execute uses prompt if provided."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             return f"Prompted: {prompt}"
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     user_message = Message(to="user2", body="ignored")
     result = await use_case.execute("conv2", user_message, prompt="audio text")
@@ -43,9 +50,11 @@ async def test_generate_agent_response_use_case_execute_prompt():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_execute_error_message():
     "Test execute returns friendly error if Rasa error detected."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             return "Error al comunicarse con Rasa: timeout"
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     user_message = Message(to="user3", body="hola")
     result = await use_case.execute("conv3", user_message)
@@ -59,9 +68,11 @@ async def test_generate_agent_response_use_case_execute_error_message():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_non_string_response():
     "Test execute maneja respuesta no-string del agente."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             return 12345  # No string
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     user_message = Message(to="user4", body="hola")
     result = await use_case.execute("conv4", user_message)
@@ -72,9 +83,11 @@ async def test_generate_agent_response_use_case_non_string_response():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_empty_message():
     "Test execute maneja mensaje vacío."
+
     class DummyAgentBotService:
         async def get_response(self, prompt):
             return "Echo: " + (prompt or "<vacio>")
+
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
     user_message = Message(to="user5", body="")
     result = await use_case.execute("conv5", user_message)
@@ -85,11 +98,14 @@ async def test_generate_agent_response_use_case_empty_message():
 @pytest.mark.asyncio
 async def test_generate_agent_response_use_case_with_audio_transcriber():
     "Test instanciación con audio_transcriber_use_case."
+
     class DummyAgentBotService:
         async def get_response(self, _prompt):
             return "ok"
+
     class DummyAudioTranscriber:
         pass
+
     use_case = GenerateAgentResponseUseCase(
         agent_bot_service=DummyAgentBotService(),
         audio_transcriber_use_case=DummyAudioTranscriber(),

@@ -117,7 +117,9 @@ class AgentGateway:
                 return text
             except (httpx.RequestError,):
                 # Si falla la conexión a Rasa, usar respuesta local
-                logger.warning("Fallo la conexión a Rasa, usando respuesta local (fallback)")
+                logger.warning(
+                    "Fallo la conexión a Rasa, usando respuesta local (fallback)"
+                )
                 return await self._local_response(conversation_id, message_text)
             except (ValueError, AttributeError) as exc:
                 logger.error(

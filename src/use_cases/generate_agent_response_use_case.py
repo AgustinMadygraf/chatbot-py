@@ -23,7 +23,9 @@ class GenerateAgentResponseUseCase:
         if prompt is not None:
             agent_bot_response = await self.agent_bot_service.get_response(prompt)
         else:
-            agent_bot_response = await self.agent_bot_service.get_response(user_message.body)
+            agent_bot_response = await self.agent_bot_service.get_response(
+                user_message.body
+            )
         if (
             isinstance(agent_bot_response, str)
             and "Error al comunicarse con Rasa" in agent_bot_response

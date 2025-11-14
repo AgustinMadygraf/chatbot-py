@@ -40,7 +40,11 @@ async def test_agent_gateway_ensure_fallback_components_exceptions(monkeypatch):
     # Ya no debe lanzar, debe devolver el fallback response
     resp = await gateway.get_response("test message")
     # Puede ser 'dummy' (DummyGeminiService) o fallback string
-    assert resp == "dummy" or "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
+    assert (
+        resp == "dummy"
+        or "no está disponible" in resp.lower()
+        or "mantenimiento" in resp.lower()
+    )
 
 
 @pytest.mark.asyncio
@@ -142,11 +146,11 @@ async def test_agent_gateway_local_response_calls_fallback(monkeypatch):
         gateway, "_ensure_fallback_components", MagicMock(return_value=None)
     )
     # El mock debe ser async para que await funcione correctamente
+
     async def async_fallback_response(c, m):
         return "fallback called"
-    monkeypatch.setattr(
-        gateway, "_fallback_response", async_fallback_response
-    )
+
+    monkeypatch.setattr(gateway, "_fallback_response", async_fallback_response)
     result = await gateway.get_response("mensaje desconocido")
     assert "fallback called" in result or "no está disponible" in result.lower()
 
@@ -181,13 +185,16 @@ async def test_agent_gateway_fallback_response_with_gateway(monkeypatch):
 
 
 class DummyHttpClient:
-    "Dummy HTTP client for testing async." 
+    "Dummy HTTP client for testing async."
+
     async def post(self, *_a, **_kw):
         class DummyResp:
             def json(self):
                 return [{"text": "Hola!"}]
+
             def raise_for_status(self):
                 return None
+
         return DummyResp()
 
 
@@ -217,8 +224,10 @@ async def test_agent_gateway_internal_local_response_fallback(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
+
     async def async_fallback_response(c, m):
         return "fallback called"
+
     monkeypatch.setattr(gateway, "_fallback_response", async_fallback_response)
     resp = await gateway.get_response("mensaje desconocido")
     assert "fallback called" in resp

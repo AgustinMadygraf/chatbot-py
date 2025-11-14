@@ -3,7 +3,8 @@ Path: src/entities/interfaces.py
 """
 
 from abc import ABC, abstractmethod
-from typing import Any,  Dict, Optional
+from typing import Any, Dict, Optional
+
 
 class SystemInstructionsRepository(ABC):
     "Interfaz para repositorios de instrucciones de sistema."
@@ -21,6 +22,7 @@ class GeminiResponderService(ABC):
     def get_response(self, prompt: str, system_instructions: Any = None) -> str:
         "Genera una respuesta usando el modelo Gemini o similar."
         pass  # pylint: disable=unnecessary-pass
+
 
 class HttpClient(ABC):
     "Interfaz para un cliente HTTP minimalista, desacoplado de librerías externas."
