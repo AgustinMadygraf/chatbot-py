@@ -1,17 +1,20 @@
 """
-
 Path: src/interface_adapter/gateways/agent_gateway.py
 """
+
 from __future__ import annotations
 import os
 import threading
 from typing import Dict, List, Optional, Tuple
+
 from src.shared.logger_rasa_v0 import get_logger
+
+from src.entities.interfaces import HttpClient
+
 from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
 from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
 from src.entities.message import Message
 from src.entities.interfaces import SystemInstructionsRepository, GeminiResponderService
-from src.infrastructure.http.http_client import HttpClient
 
 logger = get_logger("agent-gateway")
 
