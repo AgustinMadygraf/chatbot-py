@@ -32,8 +32,13 @@
    - Revisión de intents, stories y rules en data para detectar lagunas en la cobertura conversacional.
    - Validación de respuestas y acciones personalizadas (rasa_project/actions/actions.py).
 
-Dime certezas y dudas. ¿Que mejoras tienen más impacto?
 
+Dime certezas y dudas. 
+
+Si tenés certeza total sobre la audioría responde: ¿Que mejoras tienen más impacto?
+Si  tenés dudas, formula las preguntas e intenta responder. 
+Si luego tenés nuevas certezas, dime que mejoras tienen más impacto.
+Si aún tenés dudas sin resolver hazmelo saber por medio de preguntas e indicando que archivos debemos revisar.
 
 
 

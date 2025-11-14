@@ -4,7 +4,6 @@ Path: src/infrastructure/fastapi/fastapi_webhook.py
 
 import asyncio
 import httpx
-import requests
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,8 +41,9 @@ instructions_repository = JsonInstructionsRepository(
 )
 gemini_service = GeminiService()
 
+http_client = httpx.AsyncClient()
 agent_bot_service = AgentGateway(
-    http_client=requests.Session(),
+    http_client=http_client,
     instructions_repository=instructions_repository,
     gemini_service=gemini_service,
 )
@@ -159,7 +159,7 @@ async def webchat_webhook(request: Request):
     try:
         user_id, response_text = await webchat_controller.handle(user_id, user_text)
         logger.debug("[Webchat] Respuesta generada: %s", response_text)
-    except (requests.exceptions.ConnectionError, ConnectionRefusedError) as e:
+    except (ConnectionRefusedError,) as e:
         logger.error("[Webchat] Error de conexión con Rasa: %s", e, exc_info=True)
         return {
             "role": "assistant",

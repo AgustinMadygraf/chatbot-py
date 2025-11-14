@@ -15,7 +15,7 @@ class TelegramMessageController:
     async def handle(
         self, chat_id, user_message_or_text, entities=None, transcribed_text: str = None
     ):
-        "Maneja un mensaje entrante de Telegram y genera una respuesta usando el caso de uso. Si es audio, recibe el texto transcripto."
+        "Maneja un mensaje entrante de Telegram y genera una respuesta usando el caso de uso. Si es audio, recibe el texto transcripto. (async)"
         if isinstance(user_message_or_text, Message):
             user_message = user_message_or_text
         else:
@@ -26,7 +26,7 @@ class TelegramMessageController:
             )
             user_message = Message(to=chat_id, body=formatted_text)
 
-        response_message = self.use_case.execute(
+        response_message = await self.use_case.execute(
             chat_id, user_message, prompt=transcribed_text
         )
         response_text = (

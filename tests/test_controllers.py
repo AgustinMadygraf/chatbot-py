@@ -1,101 +1,82 @@
-"""
-Tests for TelegramMessageController and WebchatMessageController.
-"""
-import asyncio
-from src.interface_adapter.controller.telegram_controller import (
-    TelegramMessageController,
-)
+## Removed empty function definitions that caused IndentationError
+import pytest
+from src.interface_adapter.controller.telegram_controller import TelegramMessageController
 from src.interface_adapter.controller.webchat_controller import WebchatMessageController
 from src.entities.message import Message
 
-
 class DummyUseCase:
-    "a Dummy use case for testing."
-
-    def execute(self, chat_id, user_message, prompt=None):
-        "Return a dummy Message echoing the input."
-        _ = prompt  # Acknowledge unused parameter
+    async def execute(self, chat_id, user_message, prompt=None):
+        _ = prompt
         return Message(
             to=chat_id,
             body=f"Echo: {user_message.body if hasattr(user_message, 'body') else user_message}",
         )
 
-
 class DummyPresenter:
-    "a Dummy presenter for testing."
-    pass  # pylint: disable=unnecessary-pass
+    pass
 
-
-def test_telegram_message_controller_handle_text():
-    "Test handling text message in TelegramMessageController."
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_text():
     controller = TelegramMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     chat_id = "user1"
     user_message = "hola mundo"
-    result = asyncio.run(controller.handle(chat_id, user_message))
+    result = await controller.handle(chat_id, user_message)
     assert result[0] == chat_id
     assert "Echo: hola mundo" in result[1]
 
-
-def test_telegram_message_controller_handle_message_obj():
-    "Test handling Message object in TelegramMessageController."
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_message_obj():
     controller = TelegramMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     chat_id = "user2"
     msg = Message(to=chat_id, body="mensaje obj")
-    result = asyncio.run(controller.handle(chat_id, msg))
+    result = await controller.handle(chat_id, msg)
     assert result[0] == chat_id
     assert "Echo: mensaje obj" in result[1]
 
-
-def test_webchat_message_controller_handle_text():
-    "Test handling text message in WebchatMessageController."
+@pytest.mark.asyncio
+async def test_webchat_message_controller_handle_text():
     controller = WebchatMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     user_id = "web1"
     user_message = "hola webchat"
-    result = asyncio.run(controller.handle(user_id, user_message))
+    result = await controller.handle(user_id, user_message)
     assert result[0] == user_id
     assert "Echo: hola webchat" in result[1]
 
-
-def test_webchat_message_controller_handle_message_obj():
-    "Test handling Message object in WebchatMessageController."
+@pytest.mark.asyncio
+async def test_webchat_message_controller_handle_message_obj():
     controller = WebchatMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     user_id = "web2"
     msg = Message(to=user_id, body="msg obj")
-    result = asyncio.run(controller.handle(user_id, msg))
+    result = await controller.handle(user_id, msg)
     assert result[0] == user_id
     assert "Echo: msg obj" in result[1]
 
-
-# --- Nuevos tests para TelegramMessageController ---
-
-
 class DummyUseCaseEmpty:
-    def execute(self, _chat_id, _user_message, prompt=None):
+    async def execute(self, _chat_id, _user_message, prompt=None):
         class DummyMsg:
             body = ""
-
         return DummyMsg()
 
-
-def test_telegram_message_controller_handle_empty_response():
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_empty_response():
     controller = TelegramMessageController(
         use_case=DummyUseCaseEmpty(), presenter=DummyPresenter()
     )
     chat_id = "user3"
     user_message = "hola"
-    result = asyncio.run(controller.handle(chat_id, user_message))
+    result = await controller.handle(chat_id, user_message)
     assert result[1] == "No tengo una respuesta en este momento."
 
-
-def test_telegram_message_controller_handle_with_entities():
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_with_entities():
     controller = TelegramMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
@@ -105,30 +86,29 @@ def test_telegram_message_controller_handle_with_entities():
         {"offset": 0, "length": 4, "type": "bold"},
         {"offset": 5, "length": 5, "type": "italic"},
     ]
-    result = asyncio.run(controller.handle(chat_id, user_message, entities=entities))
-    # El texto debe tener los marcadores markdown
+    result = await controller.handle(chat_id, user_message, entities=entities)
     assert "**hola**" in result[1]
     assert "*mundo*" in result[1]
 
-
-def test_telegram_message_controller_handle_no_entities():
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_no_entities():
     controller = TelegramMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     chat_id = "user5"
     user_message = "sin entidades"
-    result = asyncio.run(controller.handle(chat_id, user_message))
+    result = await controller.handle(chat_id, user_message)
     assert result[0] == chat_id
     assert "Echo: sin entidades" in result[1]
 
-
-def test_telegram_message_controller_handle_unknown_entity_type():
+@pytest.mark.asyncio
+async def test_telegram_message_controller_handle_unknown_entity_type():
     controller = TelegramMessageController(
         use_case=DummyUseCase(), presenter=DummyPresenter()
     )
     chat_id = "user6"
     user_message = "hola mundo"
     entities = [{"offset": 0, "length": 4, "type": "unknown"}]
-    result = asyncio.run(controller.handle(chat_id, user_message, entities=entities))
+    result = await controller.handle(chat_id, user_message, entities=entities)
     assert result[0] == chat_id
     assert "Echo: hola mundo" in result[1]

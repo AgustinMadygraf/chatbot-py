@@ -16,14 +16,14 @@ class GenerateAgentResponseUseCase:
         self.agent_bot_service = agent_bot_service
         self.audio_transcriber_use_case = audio_transcriber_use_case
 
-    def execute(
+    async def execute(
         self, _conversation_id: str, user_message: Message, prompt: str = None
     ) -> Message:
-        "Genera una respuesta para el mensaje del usuario. El prompt puede ser texto transcripto si el mensaje es de audio."
+        "Genera una respuesta para el mensaje del usuario. El prompt puede ser texto transcripto si el mensaje es de audio. (async)"
         if prompt is not None:
-            agent_bot_response = self.agent_bot_service.get_response(prompt)
+            agent_bot_response = await self.agent_bot_service.get_response(prompt)
         else:
-            agent_bot_response = self.agent_bot_service.get_response(user_message.body)
+            agent_bot_response = await self.agent_bot_service.get_response(user_message.body)
         if (
             isinstance(agent_bot_response, str)
             and "Error al comunicarse con Rasa" in agent_bot_response
