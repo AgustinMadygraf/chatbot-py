@@ -83,6 +83,7 @@ def test_generate_agent_response_use_case_non_string_response():
 
     class DummyAgentBotService:
         def get_response(self, prompt):
+            _ = prompt  # Mark as intentionally unused
             return 12345  # No string
 
     use_case = GenerateAgentResponseUseCase(agent_bot_service=DummyAgentBotService())
@@ -110,7 +111,7 @@ def test_generate_agent_response_use_case_with_audio_transcriber():
     "Test instanciación con audio_transcriber_use_case."
 
     class DummyAgentBotService:
-        def get_response(self, prompt):
+        def get_response(self, _prompt):
             return "ok"
 
     class DummyAudioTranscriber:
@@ -176,7 +177,6 @@ def test_load_system_instructions_use_case_unexpected_type():
     use_case = LoadSystemInstructionsUseCase(WeirdRepo())
     result = use_case.execute()
     # SystemInstructions acepta cualquier cosa, pero debe envolverlo
-    from src.entities.system_instructions import SystemInstructions
 
     assert isinstance(result, SystemInstructions)
     assert (

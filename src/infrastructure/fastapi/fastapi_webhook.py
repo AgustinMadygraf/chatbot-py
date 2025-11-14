@@ -12,7 +12,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.shared.logger_rasa_v0 import get_logger
 from src.shared.config import get_config
 
-from src.infrastructure.requests.requests_http_client import RequestsHttpClient
 from src.interface_adapter.controller.telegram_controller import (
     TelegramMessageController,
 )
@@ -27,9 +26,9 @@ logger = get_logger("fastapi-webhook")
 config = get_config()
 TELEGRAM_TOKEN = config.get("TELEGRAM_API_KEY")
 TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+TELEGRAM_MESSAGE_DELAY = config.get("TELEGRAM_MESSAGE_DELAY", 0.5)
 
-http_client = RequestsHttpClient()
-agent_bot_service = AgentGateway(http_client=http_client)
+agent_bot_service = AgentGateway(http_client=None)  # http_client ya no es necesario
 telegram_presenter = TelegramMessagePresenter()
 
 # Inyectar el caso de uso de transcripción en GenerateAgentResponseUseCase
@@ -98,7 +97,7 @@ async def telegram_webhook(request: Request):
             for resp in formatted_responses:
                 payload = {"chat_id": chat_id, **resp}
                 await client.post(TELEGRAM_API_URL, json=payload)
-                await asyncio.sleep(3)  # <-- Delay de 3 segundos entre mensajes
+                await asyncio.sleep(TELEGRAM_MESSAGE_DELAY)
         return PlainTextResponse("OK", status_code=200)
 
     logger.info("[Telegram] No es un mensaje de texto. Ignorando.")

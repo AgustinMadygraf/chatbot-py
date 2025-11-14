@@ -32,6 +32,17 @@ def get_config():
     """
     config = {}
 
+    # TELEGRAM_MESSAGE_DELAY (opcional)
+    raw_delay = os.getenv("TELEGRAM_MESSAGE_DELAY", "0.5")
+    try:
+        telegram_delay = float(raw_delay)
+        if telegram_delay < 0:
+            raise ValueError
+    except (ValueError, TypeError):
+        logger.warning("TELEGRAM_MESSAGE_DELAY inválido, usando 0.5.")
+        telegram_delay = 0.5
+    config["TELEGRAM_MESSAGE_DELAY"] = telegram_delay
+
     # TELEGRAM_API_KEY (obligatorio)
     telegram_key = os.getenv("TELEGRAM_API_KEY")
     if (
@@ -75,7 +86,7 @@ def get_config():
         max_length = int(raw_max_length)
         if max_length <= 0:
             raise ValueError
-    except Exception:
+    except (ValueError, TypeError):
         logger.warning("LOG_MESSAGE_MAX_LENGTH inválido, usando 160.")
         max_length = 160
     config["LOG_MESSAGE_MAX_LENGTH"] = max_length
