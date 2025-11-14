@@ -1,21 +1,17 @@
 """
+
 Path: src/interface_adapter/gateways/agent_gateway.py
 """
 from __future__ import annotations
 import os
 import threading
 from typing import Dict, List, Optional, Tuple
-
-import asyncio
-import requests
-import httpx
-
 from src.shared.logger_rasa_v0 import get_logger
-
 from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
 from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
 from src.entities.message import Message
 from src.entities.interfaces import SystemInstructionsRepository, GeminiResponderService
+from src.infrastructure.http.http_client import HttpClient
 
 logger = get_logger("agent-gateway")
 
@@ -62,7 +58,7 @@ class AgentGateway:
 
     def __init__(
         self,
-        http_client,
+        http_client: HttpClient,
         instructions_repository: SystemInstructionsRepository = None,
         gemini_service: GeminiResponderService = None,
     ):
@@ -98,7 +94,7 @@ class AgentGateway:
                 response = self.http_client.post(
                     self.agent_bot_url, json=payload, timeout=60
                 )
-                response.raise_for_status()
+                # Se asume que la implementación concreta de HttpClient lanza para errores HTTP
                 data = response.json()
                 logger.debug(
                     "Respuesta de Rasa recibida desde %s con %d mensajes",
@@ -113,14 +109,6 @@ class AgentGateway:
                     if text:
                         self._store_turn(conversation_id, "bot", text)
                 return text
-            except requests.exceptions.RequestException as exc:
-                logger.error(
-                    "No se pudo contactar al servidor Rasa en %s: %s",
-                    self.agent_bot_url,
-                    exc,
-                    exc_info=True,
-                )
-                self._remote_available = False
             except (ValueError, AttributeError) as exc:
                 logger.error(
                     "Error procesando la respuesta de Rasa (%s): %s",
@@ -171,12 +159,7 @@ class AgentGateway:
             reply = gateway.get_response(prompt, self._system_instructions)
             if isinstance(reply, str) and reply.strip():
                 return reply.strip()
-        except (
-            requests.exceptions.RequestException,
-            ValueError,
-            AttributeError,
-            TypeError,
-        ) as exc:
+        except (ValueError, AttributeError, TypeError) as exc:
             logger.error("Error en fallback Gemini: %s", exc, exc_info=True)
         return self._FALLBACK_RESPONSE
 

@@ -144,10 +144,12 @@ class ProcessManager:
         self._shutdown_requested = False
 
     def start_background(self) -> None:
+        "Starts all background processes."
         for name, cmd in self._background_processes:
             self._spawn(name, cmd)
 
     def start_foreground(self) -> subprocess.Popen[str]:
+        "Starts the foreground process and returns its Popen instance."
         name, cmd = self._foreground_process
         proc = self._spawn(name, cmd)
         return proc
@@ -159,12 +161,14 @@ class ProcessManager:
         return proc
 
     def request_shutdown(self) -> None:
+        "Requests shutdown of all managed processes."
         if not self._shutdown_requested:
             self._shutdown_requested = True
             print("Shutdown requested, terminating child processes...", file=sys.stderr)
             self._terminate_all()
 
     def monitor(self, foreground: subprocess.Popen[str]) -> int:
+        "Monitors the foreground process and shuts down if any process exits."
         try:
             while True:
                 if foreground.poll() is not None:
@@ -226,6 +230,7 @@ class ProcessManager:
 
 
 def main() -> int:
+    "Punto de entrada principal para iniciar todos los servicios."
     env = _prepare_env()
     background_processes, foreground_process = _build_process_plan(env)
     manager = ProcessManager(env, background_processes, foreground_process)
