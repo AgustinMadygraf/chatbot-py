@@ -612,7 +612,7 @@ tqdm==4.67.1
     #   huggingface-hub
     #   rasa
     #   sklearn-crfsuite
-twilio==8.2.2
+twilio>=9.1.0
     # via rasa
 typer-slim==0.20.0
     # via huggingface-hub
