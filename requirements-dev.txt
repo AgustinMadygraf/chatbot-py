@@ -449,7 +449,7 @@ pytz==2022.7.1
     #   apscheduler
     #   rasa
     #   twilio
-pywin32==311
+pywin32==311; platform_system == "Windows"
     # via portalocker
 pyyaml==6.0.3
     # via
