@@ -3178,7 +3178,9 @@ tqdm==4.67.1 \
     #   huggingface-hub
     #   rasa
     #   sklearn-crfsuite
-twilio>=9.1.0
+twilio==8.2.2 \
+    --hash=sha256:6470a8bb6b1e240dd48c77f17e29fc1ee9041b75707bf437f880a585b6c722bc \
+    --hash=sha256:fa39d61757730a137d3a9c6ef84428fb3237616f21ff2b1c98116eee828d54e8
     # via rasa
 typer-slim==0.20.0 \
     --hash=sha256:9fc6607b3c6c20f5c33ea9590cbeb17848667c51feee27d9e314a579ab07d1a3 \
