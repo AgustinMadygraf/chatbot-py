@@ -2537,14 +2537,10 @@ questionary==1.10.0 \
 randomname==0.1.5 \
     --hash=sha256:e10d14ea10895ee5bc417bdcc6d955e0b586f3bc67094ab87afcf8dcac23ab92
     # via rasa
-rasa==3.6.21 \
-    --hash=sha256:17daa37370e52b6386e238fb958fd0f16ec54b6fce75871ee01ceb9770695f03 \
-    --hash=sha256:77e713ce668c3309959669e22b6d0cdde0260b12d33cfa3b95b7807526e3a641
+rasa>=3.10.0,<3.11
     # via -r requirements.in
-rasa-sdk==3.6.2 \
-    --hash=sha256:13dbd7d7f65378d793a171cef913fa785f01b256675dcdba4e97614c385333ae \
-    --hash=sha256:fe69a2eb97dfe8a16e9fd3cca55f86593b1d24b5d8a117de51d152933b4bfeac
-    # via rasa
+rasa-sdk>=3.10.0,<3.11
+    # via -r requirements.in, rasa
 redis==4.6.0 \
     --hash=sha256:585dc516b9eb042a619ef0a39c3d7d55fe81bdb4df09a52c9cdde0d07bf1aa7d \
     --hash=sha256:e2b03db868160ee4591de3cb90d40ebb50a90dd302138775937f6a42b7ed183c
@@ -3178,9 +3174,7 @@ tqdm==4.67.1 \
     #   huggingface-hub
     #   rasa
     #   sklearn-crfsuite
-twilio==8.2.2 \
-    --hash=sha256:6470a8bb6b1e240dd48c77f17e29fc1ee9041b75707bf437f880a585b6c722bc \
-    --hash=sha256:fa39d61757730a137d3a9c6ef84428fb3237616f21ff2b1c98116eee828d54e8
+twilio>=9.1.0
     # via rasa
 typer-slim==0.20.0 \
     --hash=sha256:9fc6607b3c6c20f5c33ea9590cbeb17848667c51feee27d9e314a579ab07d1a3 \

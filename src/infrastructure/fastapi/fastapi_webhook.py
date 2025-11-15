@@ -1,79 +1,146 @@
-"""
-Path: src/infrastructure/fastapi/fastapi_webhook.py
-"""
+"""FastAPI webhook bootstrap with delayed dependency initialization."""
 
 import asyncio
+import logging
+from contextlib import asynccontextmanager
+from typing import Optional
+
 import httpx
 from fastapi import FastAPI, Request
-from fastapi.responses import PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 
-from src.shared.logger_rasa_v0 import get_logger
-from src.shared.config import get_config
-
+from src.entities.message import Message
+from src.infrastructure.google_generative_ai.gemini_service import GeminiService
+from src.infrastructure.repositories.json_instructions_repository import (
+    JsonInstructionsRepository,
+)
 from src.interface_adapter.controller.telegram_controller import (
     TelegramMessageController,
 )
 from src.interface_adapter.controller.webchat_controller import WebchatMessageController
 from src.interface_adapter.gateways.agent_gateway import AgentGateway
-from src.infrastructure.repositories.json_instructions_repository import (
-    JsonInstructionsRepository,
-)
-from src.infrastructure.google_generative_ai.gemini_service import GeminiService
 from src.interface_adapter.presenters.telegram_presenter import TelegramMessagePresenter
+from src.shared.config import get_config
+from src.shared.logger_rasa_v0 import get_logger
 from src.use_cases.generate_agent_response_use_case import GenerateAgentResponseUseCase
-from src.entities.message import Message
 
-logger = get_logger("fastapi-webhook")
+logger = logging.getLogger("fastapi-webhook")
 
-config = get_config()
-TELEGRAM_TOKEN = config.get("TELEGRAM_API_KEY")
-TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-TELEGRAM_MESSAGE_DELAY = config.get("TELEGRAM_MESSAGE_DELAY", 0.5)
 
-instructions_repository = JsonInstructionsRepository(
-    str(
-        config.get(
-            "SYSTEM_INSTRUCTIONS_PATH",
-            "src/infrastructure/google_generative_ai/system_instructions.json",
+class DependencyContainer:
+    """Instancia y mantiene las dependencias compartidas de la aplicación."""
+
+    def __init__(self, config: Optional[dict] = None):
+        self._initial_config = config
+        self.config: Optional[dict] = None
+        self.http_client: Optional[httpx.AsyncClient] = None
+        self.telegram_client: Optional[httpx.AsyncClient] = None
+        self.instructions_repository: Optional[JsonInstructionsRepository] = None
+        self.gemini_service: Optional[GeminiService] = None
+        self.agent_gateway: Optional[AgentGateway] = None
+        self.telegram_presenter: Optional[TelegramMessagePresenter] = None
+        self.generate_agent_bot_use_case: Optional[GenerateAgentResponseUseCase] = None
+        self.telegram_controller: Optional[TelegramMessageController] = None
+        self.webchat_controller: Optional[WebchatMessageController] = None
+        self.telegram_api_url: Optional[str] = None
+        self.telegram_message_delay: float = 0.5
+
+    async def startup(self) -> None:
+        self.config = self._initial_config or get_config()
+        telegram_token = self.config.get("TELEGRAM_API_KEY")
+        self.telegram_api_url = (
+            f"https://api.telegram.org/bot{telegram_token}/sendMessage"
+            if telegram_token
+            else None
         )
+        self.telegram_message_delay = self.config.get("TELEGRAM_MESSAGE_DELAY", 0.5)
+
+        instructions_path = str(
+            self.config.get(
+                "SYSTEM_INSTRUCTIONS_PATH",
+                "src/infrastructure/google_generative_ai/system_instructions.json",
+            )
+        )
+        self.instructions_repository = JsonInstructionsRepository(instructions_path)
+        self.gemini_service = GeminiService()
+
+        self.http_client = httpx.AsyncClient()
+        self.telegram_client = httpx.AsyncClient()
+        self.agent_gateway = AgentGateway(
+            http_client=self.http_client,
+            instructions_repository=self.instructions_repository,
+            gemini_service=self.gemini_service,
+            agent_bot_url=self.config.get("RASA_REST_URL"),
+            remote_available=not self.config.get("DISABLE_RASA", False),
+        )
+        self.telegram_presenter = TelegramMessagePresenter()
+        self.generate_agent_bot_use_case = GenerateAgentResponseUseCase(
+            self.agent_gateway
+        )
+        self.telegram_controller = TelegramMessageController(
+            self.generate_agent_bot_use_case, self.telegram_presenter
+        )
+        self.webchat_controller = WebchatMessageController(
+            self.generate_agent_bot_use_case, self.telegram_presenter
+        )
+
+    async def shutdown(self) -> None:
+        for client in (self.http_client, self.telegram_client):
+            if client is not None:
+                await client.aclose()
+
+
+def create_app(config: Optional[dict] = None) -> FastAPI:
+    container = DependencyContainer(config)
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        await container.startup()
+        app.state.container = container
+        global logger
+        logger = get_logger("fastapi-webhook")
+        try:
+            yield
+        finally:
+            await container.shutdown()
+
+    app = FastAPI(lifespan=lifespan)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["https://chat.profebustos.com.ar", "http://localhost:5173"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
-)
-gemini_service = GeminiService()
 
-http_client = httpx.AsyncClient()
-agent_bot_service = AgentGateway(
-    http_client=http_client,
-    instructions_repository=instructions_repository,
-    gemini_service=gemini_service,
-)
-telegram_presenter = TelegramMessagePresenter()
+    return app
 
-# Inyectar el caso de uso de transcripción en GenerateAgentResponseUseCase
-generate_agent_bot_use_case = GenerateAgentResponseUseCase(agent_bot_service)
 
-telegram_controller = TelegramMessageController(
-    generate_agent_bot_use_case, telegram_presenter
-)
-webchat_controller = WebchatMessageController(
-    generate_agent_bot_use_case, telegram_presenter
-)
+app = create_app()
 
-app = FastAPI()
 
-# Agrega el middleware CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://chat.profebustos.com.ar", "http://localhost:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+def _get_container(request: Request) -> DependencyContainer:
+    container = getattr(request.app.state, "container", None)
+    if container is None:
+        raise RuntimeError("Dependency container not initialized")
+    return container
 
 
 @app.post("/telegram/webhook")
 async def telegram_webhook(request: Request):
     "Webhook para manejar mensajes entrantes de Telegram"
+    container = _get_container(request)
+    telegram_controller = container.telegram_controller
+    telegram_presenter = container.telegram_presenter
+    if (
+        telegram_controller is None
+        or telegram_presenter is None
+        or container.telegram_client is None
+        or not container.telegram_api_url
+    ):
+        raise RuntimeError("Telegram dependencies not initialized")
     logger.info("[Telegram] Webhook POST recibido")
     update = await request.json()
     message = update.get("message")
@@ -111,11 +178,12 @@ async def telegram_webhook(request: Request):
         formatted_responses = telegram_presenter.present(response_message)
         if not isinstance(formatted_responses, list):
             formatted_responses = [formatted_responses]
-        async with httpx.AsyncClient() as client:
-            for resp in formatted_responses:
-                payload = {"chat_id": chat_id, **resp}
-                await client.post(TELEGRAM_API_URL, json=payload)
-                await asyncio.sleep(TELEGRAM_MESSAGE_DELAY)
+        for resp in formatted_responses:
+            payload = {"chat_id": chat_id, **resp}
+            await container.telegram_client.post(
+                container.telegram_api_url, json=payload
+            )
+            await asyncio.sleep(container.telegram_message_delay)
         return PlainTextResponse("OK", status_code=200)
 
     logger.info("[Telegram] No es un mensaje de texto. Ignorando.")
@@ -137,6 +205,10 @@ async def webchat_webhook(request: Request):
     """
     logger.debug("[Webchat] Nueva request recibida en /webchat/webhook")
     logger.debug("[Webchat] Headers: %s", dict(request.headers))
+    container = _get_container(request)
+    webchat_controller = container.webchat_controller
+    if webchat_controller is None:
+        raise RuntimeError("Webchat controller not initialized")
     try:
         data = await request.json()
         logger.debug("[Webchat] Payload recibido: %s", data)

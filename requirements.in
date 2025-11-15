@@ -1,5 +1,6 @@
 setuptools==70.3.0
-rasa==3.6.21
+rasa>=3.10.0,<3.11
+rasa-sdk>=3.10.0,<3.11
 protobuf>=4.23.3,<4.23.4
 google-generativeai
 fastapi
