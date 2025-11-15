@@ -583,7 +583,7 @@ tensorflow-estimator==2.12.0
     # via tensorflow
 tensorflow-hub==0.13.0
     # via rasa
-tensorflow-io-gcs-filesystem==0.31.0
+tensorflow-io-gcs-filesystem==0.32.0
     # via
     #   rasa
     #   tensorflow
