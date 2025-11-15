@@ -66,8 +66,10 @@ class AgentGateway:
         http_client: httpx.AsyncClient,
         instructions_repository: SystemInstructionsRepository = None,
         gemini_service: GeminiResponderService = None,
+        agent_bot_url: Optional[str] = None,
+        remote_available: Optional[bool] = None,
     ):
-        rasa_url = os.getenv(
+        rasa_url = agent_bot_url or os.getenv(
             "RASA_REST_URL", "http://localhost:5005/webhooks/rest/webhook"
         )
         self.agent_bot_url = rasa_url
@@ -76,7 +78,9 @@ class AgentGateway:
             logger.warning(
                 "AgentGateway inicializado con http_client=None. Las llamadas a Rasa fallarán."
             )
-        self._remote_available = not _is_truthy(os.getenv("DISABLE_RASA"))
+        if remote_available is None:
+            remote_available = not _is_truthy(os.getenv("DISABLE_RASA"))
+        self._remote_available = remote_available
         self._history: Dict[str, List[Tuple[str, str]]] = {}
         self._history_lock = threading.Lock()
         self._gemini_gateway: Optional[GeminiGateway] = None
