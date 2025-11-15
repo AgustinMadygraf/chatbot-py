@@ -8,7 +8,7 @@ absl-py==1.4.0
     # via
     #   rasa
     #   tensorboard
-    #   tensorflow-intel
+    #   tensorflow
 aio-pika==8.2.3
     # via rasa
 aiofiles==25.1.0
@@ -38,7 +38,7 @@ apscheduler==3.9.1.post1
 asttokens==2.4.1
     # via devtools
 astunparse==1.6.3
-    # via tensorflow-intel
+    # via tensorflow
 async-timeout==4.0.3
     # via
     #   aiohttp
@@ -153,7 +153,7 @@ flake8==7.3.0
     #   -r requirements-dev.in
     #   -r requirements.in
 flatbuffers==25.9.23
-    # via tensorflow-intel
+    # via tensorflow
 fonttools==4.60.1
     # via matplotlib
 frozenlist==1.8.0
@@ -167,7 +167,7 @@ fsspec==2025.10.0
 future==1.0.0
     # via webexteamssdk
 gast==0.4.0
-    # via tensorflow-intel
+    # via tensorflow
 google-ai-generativelanguage==0.6.15
     # via google-generativeai
 google-api-core[grpc]==2.28.1
@@ -194,7 +194,7 @@ google-auth-oauthlib==1.0.0
 google-generativeai==0.8.5
     # via -r requirements.in
 google-pasta==0.2.0
-    # via tensorflow-intel
+    # via tensorflow
 googleapis-common-protos==1.72.0
     # via
     #   google-api-core
@@ -206,7 +206,7 @@ grpcio==1.76.0
     #   google-api-core
     #   grpcio-status
     #   tensorboard
-    #   tensorflow-intel
+    #   tensorflow
 grpcio-status==1.62.3
     # via google-api-core
 h11==0.16.0
@@ -215,7 +215,7 @@ h11==0.16.0
     #   uvicorn
     #   wsproto
 h5py==3.15.1
-    # via tensorflow-intel
+    # via tensorflow
 hf-xet==1.2.0
     # via huggingface-hub
 httpcore==1.0.9
@@ -243,7 +243,7 @@ idna==3.11
 iniconfig==2.3.0
     # via pytest
 jax==0.4.30
-    # via tensorflow-intel
+    # via tensorflow
 jaxlib==0.4.30
     # via jax
 jmespath==1.0.1
@@ -257,11 +257,11 @@ jsonpickle==3.0.4
 jsonschema==4.17.3
     # via rasa
 keras==2.12.0
-    # via tensorflow-intel
+    # via tensorflow
 kiwisolver==1.4.9
     # via matplotlib
 libclang==18.1.1
-    # via tensorflow-intel
+    # via tensorflow
 locket==1.0.0
     # via partd
 markdown==3.10
@@ -301,13 +301,13 @@ numpy==1.23.5
     #   scipy
     #   tensorboard
     #   tensorflow-hub
-    #   tensorflow-intel
+    #   tensorflow
 oauthlib==3.3.1
     # via requests-oauthlib
 opt-einsum==3.4.0
     # via
     #   jax
-    #   tensorflow-intel
+    #   tensorflow
 packaging==20.9
     # via
     #   -r requirements.in
@@ -321,7 +321,7 @@ packaging==20.9
     #   rocketchat-api
     #   safety
     #   skops
-    #   tensorflow-intel
+    #   tensorflow
 pamqp==3.2.1
     # via aiormq
 partd==1.4.2
@@ -366,7 +366,7 @@ protobuf==4.23.3
     #   rasa
     #   tensorboard
     #   tensorflow-hub
-    #   tensorflow-intel
+    #   tensorflow
 psycopg2-binary==2.9.11
     # via rasa
 py-cpuinfo==9.0.0
@@ -546,7 +546,7 @@ six==1.17.0
     #   google-pasta
     #   python-dateutil
     #   sklearn-crfsuite
-    #   tensorflow-intel
+    #   tensorflow
 sklearn-crfsuite==0.3.6
     # via rasa
 skops==0.9.0
@@ -572,27 +572,25 @@ tabulate==0.9.0
 tarsafe==0.0.4
     # via rasa
 tensorboard==2.12.3
-    # via tensorflow-intel
+    # via tensorflow
 tensorboard-data-server==0.7.2
     # via tensorboard
 tensorflow==2.12.0
-    # via rasa
-tensorflow-estimator==2.12.0
-    # via tensorflow-intel
-tensorflow-hub==0.13.0
-    # via rasa
-tensorflow-intel==2.12.0
     # via
     #   rasa
     #   tensorflow
+tensorflow-estimator==2.12.0
+    # via tensorflow
+tensorflow-hub==0.13.0
+    # via rasa
 tensorflow-io-gcs-filesystem==0.31.0
     # via
     #   rasa
-    #   tensorflow-intel
+    #   tensorflow
 termcolor==3.2.0
     # via
     #   fire
-    #   tensorflow-intel
+    #   tensorflow
 terminaltables==3.1.10
     # via rasa
 threadpoolctl==3.6.0
@@ -632,7 +630,7 @@ typing-extensions==4.15.0
     #   rasa
     #   rasa-sdk
     #   starlette
-    #   tensorflow-intel
+    #   tensorflow
     #   typer-slim
     #   uvicorn
 typing-utils==0.1.0
@@ -671,7 +669,7 @@ wheel==0.45.1
     #   rasa-sdk
     #   tensorboard
 wrapt==1.14.2
-    # via tensorflow-intel
+    # via tensorflow
 wsproto==1.3.1
     # via simple-websocket
 yarl==1.22.0
