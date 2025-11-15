@@ -11,6 +11,7 @@ flake8
 coverage
 packaging>=20.0,<21.0
 pytest
+pytest-asyncio
 pytest-benchmark
 pip-tools
 pip==24.0
