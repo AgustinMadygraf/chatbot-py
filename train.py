@@ -31,9 +31,16 @@ cmd = [
     models_dir,
 ]
 
-# Ejecutar el comando
-result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+# Ejecutar el comando y mostrar la salida en tiempo real
+process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
-print(result.stdout)
-if result.stderr:
-    print("Errores:", result.stderr)
+print("Entrenando modelo... (esto puede tardar unos minutos)\n")
+for line in process.stdout:
+    print(line, end='')  # Mostrar cada línea a medida que llega
+
+process.wait()
+
+if process.returncode != 0:
+    print("\nEl entrenamiento falló. Revisa los mensajes anteriores.")
+else:
+    print("\nEntrenamiento completado exitosamente.")

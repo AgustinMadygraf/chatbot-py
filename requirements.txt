@@ -129,21 +129,47 @@ future==1.0.0
     # via webexteamssdk
 gast==0.4.0
     # via tensorflow
+google-ai-generativelanguage==0.6.15
+    # via google-generativeai
+google-api-core[grpc]==2.28.1
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-python-client
+    #   google-generativeai
+google-api-python-client==2.187.0
+    # via google-generativeai
 google-auth==2.43.0
     # via
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
     #   google-auth-oauthlib
+    #   google-generativeai
     #   rasa
     #   tensorboard
+google-auth-httplib2==0.2.1
+    # via google-api-python-client
 google-auth-oauthlib==1.0.0
     # via tensorboard
+google-generativeai==0.8.5
+    # via -r requirements.in
 google-pasta==0.2.0
     # via tensorflow
+googleapis-common-protos==1.72.0
+    # via
+    #   google-api-core
+    #   grpcio-status
 greenlet==3.2.4
     # via sqlalchemy
 grpcio==1.76.0
     # via
+    #   google-api-core
+    #   grpcio-status
     #   tensorboard
     #   tensorflow
+grpcio-status==1.62.3
+    # via google-api-core
 h11==0.16.0
     # via
     #   httpcore
@@ -155,6 +181,10 @@ hf-xet==1.2.0
     # via huggingface-hub
 httpcore==1.0.9
     # via httpx
+httplib2==0.31.0
+    # via
+    #   google-api-python-client
+    #   google-auth-httplib2
 httptools==0.7.1
     # via sanic
 httpx==0.28.1
@@ -259,8 +289,18 @@ prompt-toolkit==3.0.28
     #   rasa-sdk
 propcache==0.4.1
     # via yarl
+proto-plus==1.26.1
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-core
 protobuf==4.23.3
     # via
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-generativeai
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
     #   rasa
     #   tensorboard
     #   tensorflow
@@ -278,6 +318,7 @@ pycparser==2.23
 pydantic==1.10.9
     # via
     #   fastapi
+    #   google-generativeai
     #   rasa
 pydot==1.4.2
     # via rasa
@@ -294,6 +335,7 @@ pymongo[srv,tls]==4.3.3
     # via rasa
 pyparsing==3.2.5
     # via
+    #   httplib2
     #   matplotlib
     #   packaging
     #   pydot
@@ -341,6 +383,7 @@ requests==2.32.5
     # via
     #   cachecontrol
     #   fbmessenger
+    #   google-api-core
     #   mattermostwrapper
     #   rasa
     #   requests-oauthlib
@@ -467,6 +510,7 @@ toolz==1.1.0
     #   partd
 tqdm==4.67.1
     # via
+    #   google-generativeai
     #   huggingface-hub
     #   rasa
     #   sklearn-crfsuite
@@ -481,6 +525,7 @@ typing-extensions==4.15.0
     #   cryptography
     #   exceptiongroup
     #   fastapi
+    #   google-generativeai
     #   grpcio
     #   huggingface-hub
     #   pydantic
@@ -498,6 +543,8 @@ ujson==5.11.0
     # via
     #   rasa
     #   sanic
+uritemplate==4.2.0
+    # via google-api-python-client
 urllib3==2.5.0
     # via
     #   botocore
