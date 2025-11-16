@@ -32,11 +32,13 @@ cmd = [
 ]
 
 # Ejecutar el comando y mostrar la salida en tiempo real
-process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+process = subprocess.Popen(
+    cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+)
 
 print("Entrenando modelo... (esto puede tardar unos minutos)\n")
 for line in process.stdout:
-    print(line, end='')  # Mostrar cada línea a medida que llega
+    print(line, end="")  # Mostrar cada línea a medida que llega
 
 process.wait()
 

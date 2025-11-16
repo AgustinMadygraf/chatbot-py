@@ -92,7 +92,7 @@ def _should_start_actions(env: Dict[str, str]) -> bool:
 
 
 def _build_process_plan(
-    env: Dict[str, str]
+    env: Dict[str, str],
 ) -> Tuple[List[Tuple[str, List[str]]], Tuple[str, List[str]]]:
     background: List[Tuple[str, List[str]]] = []
     start_rasa, model_path = _should_start_rasa(env)

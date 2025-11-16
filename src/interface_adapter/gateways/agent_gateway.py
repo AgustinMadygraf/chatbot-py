@@ -2,7 +2,6 @@
 Path: src/interface_adapter/gateways/agent_gateway.py
 """
 
-
 from __future__ import annotations
 import os
 import threading
@@ -172,9 +171,10 @@ class AgentGateway:
             return self._FALLBACK_RESPONSE
 
         try:
-            reply = gateway.get_response(prompt, self._system_instructions)
-            if asyncio.iscoroutine(reply):
-                reply = await reply
+            # Ejecutar siempre en un thread para evitar bloquear el event loop
+            reply = await asyncio.to_thread(
+                gateway.get_response, prompt, self._system_instructions
+            )
             if isinstance(reply, str) and reply.strip():
                 return reply.strip()
         except (ValueError, AttributeError, TypeError) as exc:

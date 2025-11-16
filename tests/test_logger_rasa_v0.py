@@ -1,6 +1,7 @@
 """
 Tests for logger_rasa_v0.py (src/shared/logger_rasa_v0.py)
 """
+
 import logging
 import types
 import pytest
