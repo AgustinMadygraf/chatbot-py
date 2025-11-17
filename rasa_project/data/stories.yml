@@ -27,3 +27,24 @@ stories:
   steps:
     - intent: test_bot
     - action: utter_test_bot
+
+- story: saludo consulta producto
+  steps:
+    - intent: saludo
+    - action: utter_saludo
+    - intent: consultar_producto
+    - action: utter_consultar_producto
+
+- story: consulta con despedida
+  steps:
+    - intent: consultar_producto
+    - action: utter_consultar_producto
+    - intent: despedida
+    - action: utter_despedida
+
+- story: fallback seguido de consulta
+  steps:
+    - intent: out_of_scope
+    - action: action_gemini_fallback
+    - intent: consultar_producto
+    - action: utter_consultar_producto

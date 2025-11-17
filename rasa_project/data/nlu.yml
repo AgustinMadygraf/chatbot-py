@@ -73,6 +73,11 @@ nlu:
     - ¿Me contás sobre las bolsas de papel?
     - ¿Qué bolsas de papel tienen con manijas?
     - ¿Tienen bolsas de papel sin manijas?
+    - Necesito bolsas de papel personalizadas con mi logo
+    - ¿Qué bolsa me recomendás para entregas a domicilio?
+    - Busco bolsas tamaño mediano, ¿qué modelos tienen?
+    - ¿Tienen bolsas reforzadas para productos pesados?
+    - Quiero cotizar bolsas de papel para mi negocio
 
 - intent: responder_entendido
   examples: |
