@@ -2,8 +2,11 @@
 """Wrapper to run Black with a guaranteed event loop."""
 from __future__ import annotations
 
+import os
 import asyncio
 import sys
+
+os.environ.setdefault("BLACK_USE_UVLOOP", "0")
 
 from black import patched_main
 
