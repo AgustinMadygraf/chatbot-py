@@ -256,6 +256,8 @@ async def test_agent_gateway_fallback_response_gateway_none(monkeypatch):
     monkeypatch.setattr(gateway, "_ensure_fallback_components", lambda: None)
     resp = await gateway.get_response("mensaje")
     assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
+
+
 @pytest.mark.asyncio
 async def test_agent_gateway_fallback_response_gateway_error(monkeypatch):
     "Test fallback response returns fallback string when GeminiGateway fails."
@@ -276,7 +278,9 @@ async def test_agent_gateway_fallback_response_gateway_error(monkeypatch):
     resp = await gateway.get_response("mensaje")
     assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
 
+
 # --- Nuevos tests para cobertura interna de AgentGateway ---
+
 def test_agent_gateway_build_payload_str():
     "Test build_payload with string input through public interface."
     gateway = make_gateway(http_client=None)
@@ -305,6 +309,8 @@ def test_agent_gateway_build_payload_message():
 
 def test_agent_gateway_is_truthy_cases():
     "Test _is_truthy utility function."
+
+
 @pytest.mark.asyncio
 async def test_agent_gateway_conversation_handling():
     "Test conversation handling through public interface."

@@ -3,4 +3,4 @@ __pycache__/
 .env
 .rasa/
 .coverage
-venv310/
+.venv/
