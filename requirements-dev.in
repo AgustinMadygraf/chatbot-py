@@ -15,3 +15,4 @@ flake8==6.1.0
 flake8-bugbear==23.9.16
 mypy==1.10.0
 pre-commit==3.7.1
+black==22.3.0
