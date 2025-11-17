@@ -45,6 +45,7 @@ attrs==22.1.0
     # via
     #   aiohttp
     #   jsonschema
+    #   pytest
     #   rasa
 babel==2.17.0
     # via aiogram
@@ -199,6 +200,8 @@ idna==3.11
     #   httpx
     #   requests
     #   yarl
+iniconfig==2.3.0
+    # via pytest
 jax==0.4.30
     # via tensorflow
 jaxlib==0.4.30
@@ -267,6 +270,7 @@ packaging==20.9
     #   dask
     #   huggingface-hub
     #   matplotlib
+    #   pytest
     #   rasa
     #   rocketchat-api
     #   skops
@@ -279,6 +283,7 @@ pillow==12.0.0
     # via matplotlib
 pluggy==1.6.0
     # via
+    #   pytest
     #   rasa
     #   rasa-sdk
 portalocker==2.10.1
@@ -308,6 +313,8 @@ protobuf==4.23.3
     #   tensorflow-hub
 psycopg2-binary==2.9.11
     # via rasa
+py==1.11.0
+    # via pytest
 pyasn1==0.6.1
     # via
     #   pyasn1-modules
@@ -342,6 +349,8 @@ pyparsing==3.2.5
     #   pydot
 pyrsistent==0.20.0
     # via jsonschema
+pytest==6.2.5
+    # via -r requirements.in
 python-crfsuite==0.9.11
     # via sklearn-crfsuite
 python-dateutil==2.8.2
@@ -505,6 +514,8 @@ terminaltables==3.1.10
     # via rasa
 threadpoolctl==3.6.0
     # via scikit-learn
+toml==0.10.2
+    # via pytest
 toolz==1.1.0
     # via
     #   dask

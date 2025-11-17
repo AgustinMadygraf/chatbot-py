@@ -4,3 +4,4 @@ uvicorn
 python-dotenv
 google-generativeai
 packaging<21.0
+pytest<7.0.0
