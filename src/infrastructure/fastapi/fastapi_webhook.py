@@ -212,7 +212,7 @@ async def webchat_webhook(request: Request):
     try:
         data = await request.json()
         logger.debug("[Webchat] Payload recibido: %s", data)
-    except (ValueError, TypeError, UnicodeDecodeError) as e:
+    except (ValueError, TypeError) as e:
         logger.error("[Webchat] Error al parsear JSON: %s", e, exc_info=True)
         return {"role": "assistant", "text": "Error en el formato de la solicitud."}
 
@@ -231,7 +231,7 @@ async def webchat_webhook(request: Request):
     try:
         user_id, response_text = await webchat_controller.handle(user_id, user_text)
         logger.debug("[Webchat] Respuesta generada: %s", response_text)
-    except (ConnectionRefusedError,) as e:
+    except ConnectionRefusedError as e:
         logger.error("[Webchat] Error de conexión con Rasa: %s", e, exc_info=True)
         return {
             "role": "assistant",

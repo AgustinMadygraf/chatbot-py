@@ -118,7 +118,7 @@ class AgentGateway:
                     if text:
                         self._store_turn(conversation_id, "bot", text)
                 return text
-            except (httpx.RequestError,):
+            except httpx.RequestError:
                 # Si falla la conexión a Rasa, usar respuesta local
                 logger.warning(
                     "Fallo la conexión a Rasa, usando respuesta local (fallback)"
@@ -196,13 +196,7 @@ class AgentGateway:
                     "No se proporcionó instructions_repository a AgentGateway."
                 )
                 self._system_instructions = None
-        except (
-            FileNotFoundError,
-            PermissionError,
-            OSError,
-            ValueError,
-            TypeError,
-        ) as exc:
+        except (OSError, ValueError, TypeError) as exc:
             logger.error(
                 "No se pudieron cargar las instrucciones del sistema: %s",
                 exc,
