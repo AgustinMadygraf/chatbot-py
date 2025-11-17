@@ -78,6 +78,14 @@ nlu:
     - Busco bolsas tamaño mediano, ¿qué modelos tienen?
     - ¿Tienen bolsas reforzadas para productos pesados?
     - Quiero cotizar bolsas de papel para mi negocio
+    - ¿Qué tamaños de bolsas manejan?
+    - ¿Qué medidas tenés disponibles?
+    - qué formatos tenés?
+    - ¿Qué formatos de bolsa ofrecen?
+    - Necesito saber las medidas que trabajan
+    - ¿Qué tamaño me recomendás para un delivery?
+    - ¿Tienen distintos talles de bolsas?
+    - qué medidas tienen hoy?
 
 - intent: responder_entendido
   examples: |

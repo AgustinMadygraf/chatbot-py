@@ -7,8 +7,6 @@ pipeline:
 - name: "CountVectorsFeaturizer"
 - name: "DIETClassifier"
   epochs: 100
-- name: "ResponseSelector"
-  epochs: 100
 - name: "CRFEntityExtractor"
 - name: "EntitySynonymMapper"
 - name: "FallbackClassifier"
