@@ -5,7 +5,6 @@ Path: rasa_project/actions/actions.py
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from pathlib import Path
 
 from src.shared.config import DEFAULT_SYSTEM_INSTRUCTIONS_PATH
 from src.shared.logger_rasa_v0 import get_logger
@@ -43,6 +42,14 @@ class ActionGeminiFallback(Action):
     def name(self) -> Text:
         return "action_gemini_fallback"
 
+    def __init__(self) -> None:
+        instructions_path = str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)
+        self._instructions_repository = JsonInstructionsRepository(instructions_path)
+        self._load_instructions = LoadSystemInstructionsUseCase(
+            self._instructions_repository
+        )
+        self._system_instructions = self._load_instructions.execute()
+
     async def run(
         self,
         dispatcher: CollectingDispatcher,
@@ -58,36 +65,20 @@ class ActionGeminiFallback(Action):
             tracker.get_intent_of_latest_message(),
             len(history),
         )
-        prompt_with_history = f"{history}\nGemini:"
+        prompt_with_history = f"{history[-2000:]}\nGemini:"
 
         # --- Reutilizar gateways, casos de uso y entidades ---
         try:
-            # Elimina config y usa DEFAULT_SYSTEM_INSTRUCTIONS_PATH
-            instructions_path = str(DEFAULT_SYSTEM_INSTRUCTIONS_PATH)
-            logger.debug(
-                "instructions_path=%s",
-                instructions_path,
-            )
-            if instructions_path:
-                logger.debug(
-                    "Instrucciones existen=%s",
-                    Path(instructions_path).is_file(),
-                )
-
-            instructions_repository = JsonInstructionsRepository(instructions_path)
-            load_instructions_use_case = LoadSystemInstructionsUseCase(
-                instructions_repository
-            )
-            system_instructions = load_instructions_use_case.execute()
-            logger.debug("Instrucciones cargadas=%s", bool(system_instructions))
-
             gemini_service = GeminiService()
             gemini = GeminiGateway(gemini_service)
 
-            respuesta = gemini.get_response(prompt_with_history, system_instructions)
+            respuesta = gemini.get_response(prompt_with_history, self._system_instructions)
             logger.debug("Respuesta Gemini recibida=%s", bool(respuesta))
 
+            if not respuesta:
+                raise ValueError("Gemini devolvió respuesta vacía")
             dispatcher.utter_message(text=respuesta)
         except (FileNotFoundError, KeyError, ValueError, RuntimeError) as e:
-            dispatcher.utter_message(text=f"[ERROR] Fallback Gemini: {e}")
+            logger.exception("Error en fallback Gemini: %s", e)
+            dispatcher.utter_message(text="Me quedé sin datos. Te derivo con un humano por WhatsApp.")
         return []

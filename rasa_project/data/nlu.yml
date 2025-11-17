@@ -86,6 +86,11 @@ nlu:
     - ¿Qué tamaño me recomendás para un delivery?
     - ¿Tienen distintos talles de bolsas?
     - qué medidas tienen hoy?
+    - ¿Qué bolsas reforzadas tienen para 5 kg?
+    - Necesito bolsas de papel tamaño 30x40 con manija cordón
+    - ¿Pueden imprimir mi logo a dos colores?
+    - ¿Cuál es la cantidad mínima de bolsas blancas sin manija?
+    - Busco bolsas ecológicas tamaño chico, ¿qué opciones hay?
 
 - intent: responder_entendido
   examples: |

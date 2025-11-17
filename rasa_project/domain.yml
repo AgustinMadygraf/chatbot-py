@@ -31,6 +31,16 @@ responses:
   utter_test_bot:
     - text: "test superado con éxito"
 
+  utter_derivar_whatsapp:
+  - text: "Para precios o pedidos concretos, escribinos a WhatsApp +54 11 1234-5678 y te asistimos al instante."
+
+slots:
+  requested_product:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
 actions:
   - utter_saludo
   - utter_despedida

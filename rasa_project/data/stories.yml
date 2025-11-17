@@ -22,6 +22,7 @@ stories:
   steps:
     - intent: responder_entendido
     - action: utter_responder_entendido
+    - action: utter_derivar_whatsapp
 
 - story: test bot
   steps:
@@ -48,3 +49,11 @@ stories:
     - action: action_gemini_fallback
     - intent: consultar_producto
     - action: utter_consultar_producto
+
+- story: consulta con aclaración y cierre
+  steps:
+    - intent: consultar_producto
+    - action: utter_consultar_producto
+    - intent: responder_entendido
+    - action: utter_responder_entendido
+    - action: utter_derivar_whatsapp
