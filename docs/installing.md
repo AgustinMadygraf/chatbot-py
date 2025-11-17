@@ -30,3 +30,16 @@ python3 start.py
 
 
 
+## Herramientas de desarrollo (opcional)
+
+pip install -r requirements.txt -r requirements-dev.txt
+
+ruff format src tests
+
+ruff check src tests
+
+pre-commit install
+
+
+
+
