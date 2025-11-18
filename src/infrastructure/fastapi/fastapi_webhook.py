@@ -3,7 +3,6 @@
 import asyncio
 import logging
 from contextlib import asynccontextmanager
-from typing import Optional
 
 import httpx
 from fastapi import FastAPI, Request
@@ -31,28 +30,26 @@ logger = logging.getLogger("fastapi-webhook")
 class DependencyContainer:
     """Instancia y mantiene las dependencias compartidas de la aplicación."""
 
-    def __init__(self, config: Optional[dict] = None):
+    def __init__(self, config: dict | None = None):
         self._initial_config = config
-        self.config: Optional[dict] = None
-        self.http_client: Optional[httpx.AsyncClient] = None
-        self.telegram_client: Optional[httpx.AsyncClient] = None
-        self.instructions_repository: Optional[JsonInstructionsRepository] = None
-        self.gemini_service: Optional[GeminiService] = None
-        self.agent_gateway: Optional[AgentGateway] = None
-        self.telegram_presenter: Optional[TelegramMessagePresenter] = None
-        self.generate_agent_bot_use_case: Optional[GenerateAgentResponseUseCase] = None
-        self.telegram_controller: Optional[TelegramMessageController] = None
-        self.webchat_controller: Optional[WebchatMessageController] = None
-        self.telegram_api_url: Optional[str] = None
+        self.config: dict | None = None
+        self.http_client: httpx.AsyncClient | None = None
+        self.telegram_client: httpx.AsyncClient | None = None
+        self.instructions_repository: JsonInstructionsRepository | None = None
+        self.gemini_service: GeminiService | None = None
+        self.agent_gateway: AgentGateway | None = None
+        self.telegram_presenter: TelegramMessagePresenter | None = None
+        self.generate_agent_bot_use_case: GenerateAgentResponseUseCase | None = None
+        self.telegram_controller: TelegramMessageController | None = None
+        self.webchat_controller: WebchatMessageController | None = None
+        self.telegram_api_url: str | None = None
         self.telegram_message_delay: float = 0.5
 
     async def startup(self) -> None:
         self.config = self._initial_config or get_config()
         telegram_token = self.config.get("TELEGRAM_API_KEY")
         self.telegram_api_url = (
-            f"https://api.telegram.org/bot{telegram_token}/sendMessage"
-            if telegram_token
-            else None
+            f"https://api.telegram.org/bot{telegram_token}/sendMessage" if telegram_token else None
         )
         self.telegram_message_delay = self.config.get("TELEGRAM_MESSAGE_DELAY", 0.5)
 
@@ -75,9 +72,7 @@ class DependencyContainer:
             remote_available=not self.config.get("DISABLE_RASA", False),
         )
         self.telegram_presenter = TelegramMessagePresenter()
-        self.generate_agent_bot_use_case = GenerateAgentResponseUseCase(
-            self.agent_gateway
-        )
+        self.generate_agent_bot_use_case = GenerateAgentResponseUseCase(self.agent_gateway)
         self.telegram_controller = TelegramMessageController(
             self.generate_agent_bot_use_case, self.telegram_presenter
         )
@@ -91,7 +86,7 @@ class DependencyContainer:
                 await client.aclose()
 
 
-def create_app(config: Optional[dict] = None) -> FastAPI:
+def create_app(config: dict | None = None) -> FastAPI:
     container = DependencyContainer(config)
 
     @asynccontextmanager
@@ -155,9 +150,7 @@ async def telegram_webhook(request: Request):
         text = message["text"]
         entities = message.get("entities", None)
         try:
-            chat_id, response_text = await telegram_controller.handle(
-                chat_id, text, entities
-            )
+            chat_id, response_text = await telegram_controller.handle(chat_id, text, entities)
         except (httpx.RequestError, httpx.HTTPStatusError) as e:
             logger.error("[Telegram] Error de conexión: %s", e, exc_info=True)
             response_text = (
@@ -180,9 +173,7 @@ async def telegram_webhook(request: Request):
             formatted_responses = [formatted_responses]
         for resp in formatted_responses:
             payload = {"chat_id": chat_id, **resp}
-            await container.telegram_client.post(
-                container.telegram_api_url, json=payload
-            )
+            await container.telegram_client.post(container.telegram_api_url, json=payload)
             await asyncio.sleep(container.telegram_message_delay)
         return PlainTextResponse("OK", status_code=200)
 

@@ -3,7 +3,7 @@ Path: src/entities/interfaces.py
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class SystemInstructionsRepository(ABC):
@@ -31,8 +31,8 @@ class HttpClient(ABC):
     def post(
         self,
         url: str,
-        json: Optional[Dict[str, Any]] = None,
-        timeout: Optional[int] = None,
+        json: dict[str, Any] | None = None,
+        timeout: int | None = None,
     ) -> Any:
         "Envía una solicitud POST y devuelve la respuesta (puede ser un objeto Response o dict)."
         pass  # pylint: disable=unnecessary-pass

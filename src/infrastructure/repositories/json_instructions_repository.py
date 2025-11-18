@@ -71,7 +71,7 @@ class JsonInstructionsRepository:
                 resolved_path.resolve(),
                 resolved_path.is_file(),
             )
-            with open(resolved_path, "r", encoding="utf-8") as f:
+            with open(resolved_path, encoding="utf-8") as f:
                 data = json.load(f)
             logger.debug("Contenido JSON leído: %s", data)
             return data.get(self.key)

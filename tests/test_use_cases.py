@@ -1,8 +1,9 @@
 import pytest
-from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
+
+from src.entities.message import Message
 from src.entities.system_instructions import SystemInstructions
 from src.use_cases.generate_agent_response_use_case import GenerateAgentResponseUseCase
-from src.entities.message import Message
+from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
 
 
 @pytest.mark.asyncio
@@ -169,8 +170,7 @@ def test_load_system_instructions_use_case_unexpected_type():
 
     assert isinstance(result, SystemInstructions)
     assert (
-        getattr(result, "instructions", None) == 12345
-        or getattr(result, "content", None) == 12345
+        getattr(result, "instructions", None) == 12345 or getattr(result, "content", None) == 12345
     )
 
 

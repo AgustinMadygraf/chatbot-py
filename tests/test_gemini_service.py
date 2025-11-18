@@ -3,7 +3,9 @@ Tests for GeminiService (src/infrastructure/google_generative_ai/gemini_service.
 """
 
 from unittest.mock import MagicMock, mock_open
+
 import pytest
+
 from src.infrastructure.google_generative_ai.gemini_service import GeminiService
 
 

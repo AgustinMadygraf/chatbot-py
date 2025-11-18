@@ -3,6 +3,7 @@ Path: tests/test_entities.py
 """
 
 import pytest
+
 from src.entities.gemini_responder import GeminiResponder
 from src.entities.message import Message
 

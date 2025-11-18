@@ -22,6 +22,4 @@ class MarkdownValidator:
                 "MarkdownV2 desbalanceado: número impar de asteriscos (*) fuera de listas"
             )
         if text.count("_") % 2 != 0:
-            raise ValueError(
-                "MarkdownV2 desbalanceado: número impar de guiones bajos (_)"
-            )
+            raise ValueError("MarkdownV2 desbalanceado: número impar de guiones bajos (_)")

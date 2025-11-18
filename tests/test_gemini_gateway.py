@@ -1,7 +1,5 @@
-import pytest
-from unittest.mock import MagicMock
-from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
 from src.entities.system_instructions import SystemInstructions
+from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
 
 
 class DummyService:

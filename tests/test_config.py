@@ -1,5 +1,7 @@
 import os
+
 import pytest
+
 from src.shared.config import get_config
 
 

@@ -3,9 +3,7 @@ Tests for logger_rasa_v0.py (src/shared/logger_rasa_v0.py)
 """
 
 import logging
-import types
-import pytest
-from unittest.mock import patch, MagicMock
+
 from src.shared.logger_rasa_v0 import TruncatingColoredFormatter, get_logger
 
 

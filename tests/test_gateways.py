@@ -2,24 +2,27 @@
 Path: tests/test_gateways.py
 """
 
-from unittest.mock import MagicMock, AsyncMock
 import asyncio
-import pytest
-import httpx
+from unittest.mock import AsyncMock, MagicMock
 
-from src.interface_adapter.gateways.agent_gateway import AgentGateway
-from src.entities.interfaces import SystemInstructionsRepository, GeminiResponderService
+import httpx
+import pytest
+
+from src.entities.interfaces import GeminiResponderService, SystemInstructionsRepository
 from src.entities.message import Message
+from src.interface_adapter.gateways.agent_gateway import AgentGateway
 
 
 class DummyInstructionsRepository(SystemInstructionsRepository):
-    " Dummy repository that raises FileNotFoundError on load."
+    "Dummy repository that raises FileNotFoundError on load."
+
     def load(self):
         raise FileNotFoundError("no file")
 
 
 class DummyGeminiService(GeminiResponderService):
-    " Dummy Gemini service for testing."
+    "Dummy Gemini service for testing."
+
     def get_response(self, prompt, system_instructions=None):
         return "dummy"
 
@@ -45,9 +48,7 @@ async def test_agent_gateway_ensure_fallback_components_exceptions(monkeypatch):
     resp = await gateway.get_response("test message")
     # Puede ser 'dummy' (DummyGeminiService) o fallback string
     assert (
-        resp == "dummy"
-        or "no está disponible" in resp.lower()
-        or "mantenimiento" in resp.lower()
+        resp == "dummy" or "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
     )
 
 
@@ -60,6 +61,7 @@ async def test_agent_gateway_fallback_response_exception(monkeypatch):
 
     class DummyGateway:
         "Dummy GeminiGateway that raises exception."
+
         async def get_response(self, prompt, system_instructions=None):
             "Simulate failure in get_response."
             raise ValueError("fail")
@@ -95,9 +97,7 @@ async def test_agent_gateway_get_response_rasa_error_fallback(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     # Ya no debe lanzar, debe devolver el fallback response
     resp = await gateway.get_response("test message")
     assert "no está disponible" in resp.lower() or "mantenimiento" in resp.lower()
@@ -109,9 +109,7 @@ async def test_agent_gateway_local_response_saludo(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     resp = await gateway.get_response("hola")
     assert "hola" in resp.lower()
 
@@ -122,9 +120,7 @@ async def test_agent_gateway_local_response_despedida(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     resp = await gateway.get_response("adios")
     assert "adios" in resp.lower() or "adiós" in resp.lower()
 
@@ -135,9 +131,7 @@ async def test_agent_gateway_local_response_fallback(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     result = await gateway.get_response("mensaje desconocido")
     assert "no está disponible" in result.lower() or "servidor" in result.lower()
 
@@ -148,9 +142,7 @@ async def test_agent_gateway_local_response_calls_fallback(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     # El mock debe ser async para que await funcione correctamente
 
     async def async_fallback_response(_c, _m):
@@ -167,9 +159,7 @@ async def test_agent_gateway_fallback_response_no_gateway(monkeypatch):
     mock_http = AsyncMock()
     mock_http.post.side_effect = httpx.RequestError("Rasa down")
     gateway = make_gateway(http_client=mock_http)
-    monkeypatch.setattr(
-        gateway, "_ensure_fallback_components", MagicMock(return_value=None)
-    )
+    monkeypatch.setattr(gateway, "_ensure_fallback_components", MagicMock(return_value=None))
     result = await gateway.get_response("test")
     assert "no está disponible" in result.lower() or "servidor" in result.lower()
 
@@ -195,8 +185,10 @@ class DummyHttpClient:
 
     async def post(self, *_a, **_kw):
         "Simulate an async HTTP POST request."
+
         class DummyResp:
             "Dummy response object for async HTTP POST."
+
             def json(self):
                 "Return a dummy JSON response."
                 return [{"text": "Hola!"}]
@@ -266,7 +258,8 @@ async def test_agent_gateway_fallback_response_gateway_error(monkeypatch):
     gateway = make_gateway(http_client=mock_http)
 
     class DummyGateway:
-        " Dummy GeminiGateway that raises exception."
+        "Dummy GeminiGateway that raises exception."
+
         def get_response(self, prompt, system_instructions=None):
             "Simulate failure in get_response."
             raise ValueError("fail")
@@ -280,6 +273,7 @@ async def test_agent_gateway_fallback_response_gateway_error(monkeypatch):
 
 
 # --- Nuevos tests para cobertura interna de AgentGateway ---
+
 
 def test_agent_gateway_build_payload_str():
     "Test build_payload with string input through public interface."

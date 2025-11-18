@@ -2,12 +2,11 @@
 Path: src/interface_adapter/presenters/telegram_presenter.py
 """
 
-from src.shared.logger_rasa_v0 import get_logger
-
+from src.entities.message import Message
 from src.interface_adapter.presenters.markdown_converter import MarkdownConverter
 from src.interface_adapter.presenters.markdown_validator import MarkdownValidator
 from src.interface_adapter.presenters.message_splitter import MessageSplitter
-from src.entities.message import Message
+from src.shared.logger_rasa_v0 import get_logger
 
 logger = get_logger("telegram-presenter")
 
@@ -36,7 +35,5 @@ class TelegramMessagePresenter:
                     logger.error("MarkdownV2 desbalanceado: %s", e)
                     error_logged = True
                 # Devuelve el texto sin formato si está desbalanceado
-                result.append(
-                    {"text": part.replace("*", "").replace("_", ""), "parse_mode": None}
-                )
+                result.append({"text": part.replace("*", "").replace("_", ""), "parse_mode": None})
         return result

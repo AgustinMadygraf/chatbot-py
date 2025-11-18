@@ -2,7 +2,6 @@
 Tests for MessageSplitter (src/interface_adapter/presenters/message_splitter.py)
 """
 
-import pytest
 from src.interface_adapter.presenters.message_splitter import MessageSplitter
 
 

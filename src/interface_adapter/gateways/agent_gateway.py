@@ -3,19 +3,18 @@ Path: src/interface_adapter/gateways/agent_gateway.py
 """
 
 from __future__ import annotations
+
+import asyncio
 import os
 import threading
-import asyncio
-from typing import Dict, List, Optional, Tuple
-
-from src.shared.logger_rasa_v0 import get_logger
 
 import httpx
 
-from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
-from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
+from src.entities.interfaces import GeminiResponderService, SystemInstructionsRepository
 from src.entities.message import Message
-from src.entities.interfaces import SystemInstructionsRepository, GeminiResponderService
+from src.interface_adapter.gateways.gemini_gateway import GeminiGateway
+from src.shared.logger_rasa_v0 import get_logger
+from src.use_cases.load_system_instructions import LoadSystemInstructionsUseCase
 
 logger = get_logger("agent-gateway")
 
@@ -31,7 +30,7 @@ class AgentGateway:
     - Si se requiere persistencia, debe implementarse un repositorio externo e inyectarse.
     """
 
-    _SALUDO_KEYWORDS: Tuple[str, ...] = (
+    _SALUDO_KEYWORDS: tuple[str, ...] = (
         "hola",
         "hola!",
         "holi",
@@ -41,7 +40,7 @@ class AgentGateway:
         "buenas noches",
         "saludos",
     )
-    _DESPEDIDA_KEYWORDS: Tuple[str, ...] = (
+    _DESPEDIDA_KEYWORDS: tuple[str, ...] = (
         "adios",
         "adiós",
         "chau",
@@ -65,8 +64,8 @@ class AgentGateway:
         http_client: httpx.AsyncClient,
         instructions_repository: SystemInstructionsRepository = None,
         gemini_service: GeminiResponderService = None,
-        agent_bot_url: Optional[str] = None,
-        remote_available: Optional[bool] = None,
+        agent_bot_url: str | None = None,
+        remote_available: bool | None = None,
     ):
         rasa_url = agent_bot_url or os.getenv(
             "RASA_REST_URL", "http://localhost:5005/webhooks/rest/webhook"
@@ -80,14 +79,12 @@ class AgentGateway:
         if remote_available is None:
             remote_available = not _is_truthy(os.getenv("DISABLE_RASA"))
         self._remote_available = remote_available
-        self._history: Dict[str, List[Tuple[str, str]]] = {}
+        self._history: dict[str, list[tuple[str, str]]] = {}
         self._history_lock = threading.Lock()
-        self._gemini_gateway: Optional[GeminiGateway] = None
+        self._gemini_gateway: GeminiGateway | None = None
         self._system_instructions = None
         self._fallback_initialized = False
-        self._instructions_repository: SystemInstructionsRepository = (
-            instructions_repository
-        )
+        self._instructions_repository: SystemInstructionsRepository = instructions_repository
         self._gemini_service: GeminiResponderService = gemini_service
         logger.debug("Inicializando AgentGateway con endpoint %s", self.agent_bot_url)
 
@@ -101,18 +98,14 @@ class AgentGateway:
         if self._remote_available:
             try:
                 logger.debug("Enviando payload a Rasa (%s)", self.agent_bot_url)
-                response = await self.http_client.post(
-                    self.agent_bot_url, json=payload, timeout=60
-                )
+                response = await self.http_client.post(self.agent_bot_url, json=payload, timeout=60)
                 data = response.json()
                 logger.debug(
                     "Respuesta de Rasa recibida desde %s con %d mensajes",
                     self.agent_bot_url,
                     len(data) if isinstance(data, list) else 0,
                 )
-                text = " ".join(
-                    [msg.get("text", "") for msg in data if "text" in msg]
-                ).strip()
+                text = " ".join([msg.get("text", "") for msg in data if "text" in msg]).strip()
                 if conversation_id:
                     self._store_turn(conversation_id, "user", message_text)
                     if text:
@@ -120,9 +113,7 @@ class AgentGateway:
                 return text
             except httpx.RequestError:
                 # Si falla la conexión a Rasa, usar respuesta local
-                logger.warning(
-                    "Fallo la conexión a Rasa, usando respuesta local (fallback)"
-                )
+                logger.warning("Fallo la conexión a Rasa, usando respuesta local (fallback)")
                 return await self._local_response(conversation_id, message_text)
             except (ValueError, AttributeError) as exc:
                 logger.error(
@@ -135,7 +126,7 @@ class AgentGateway:
 
         return await self._local_response(conversation_id, message_text)
 
-    def _build_payload(self, message_or_text) -> Tuple[Dict[str, str], str]:
+    def _build_payload(self, message_or_text) -> tuple[dict[str, str], str]:
         if isinstance(message_or_text, str):
             payload = {"sender": "user", "message": message_or_text}
             conversation_id = ""
@@ -172,16 +163,14 @@ class AgentGateway:
 
         try:
             # Ejecutar siempre en un thread para evitar bloquear el event loop
-            reply = await asyncio.to_thread(
-                gateway.get_response, prompt, self._system_instructions
-            )
+            reply = await asyncio.to_thread(gateway.get_response, prompt, self._system_instructions)
             if isinstance(reply, str) and reply.strip():
                 return reply.strip()
         except (ValueError, AttributeError, TypeError) as exc:
             logger.error("Error en fallback Gemini: %s", exc, exc_info=True)
         return self._FALLBACK_RESPONSE
 
-    def _ensure_fallback_components(self) -> Optional[GeminiGateway]:
+    def _ensure_fallback_components(self) -> GeminiGateway | None:
         if self._fallback_initialized:
             return self._gemini_gateway
 
@@ -192,9 +181,7 @@ class AgentGateway:
                 use_case = LoadSystemInstructionsUseCase(self._instructions_repository)
                 self._system_instructions = use_case.execute()
             else:
-                logger.error(
-                    "No se proporcionó instructions_repository a AgentGateway."
-                )
+                logger.error("No se proporcionó instructions_repository a AgentGateway.")
                 self._system_instructions = None
         except (OSError, ValueError, TypeError) as exc:
             logger.error(
@@ -232,7 +219,7 @@ class AgentGateway:
                 del history[:-20]
 
     def _build_prompt(self, conversation_id: str, message_text: str) -> str:
-        lines: List[str] = []
+        lines: list[str] = []
         if conversation_id:
             with self._history_lock:
                 history = list(self._history.get(conversation_id, []))
@@ -244,7 +231,7 @@ class AgentGateway:
         return "\n".join(lines)
 
 
-def _is_truthy(value: Optional[str]) -> bool:
+def _is_truthy(value: str | None) -> bool:
     if value is None:
         return False
     return value.strip().lower() in {"1", "true", "yes", "on"}

@@ -3,12 +3,12 @@ Path: src/infrastructure/google_generativeai/gemini_service.py
 """
 
 import json
+
 import google.generativeai as genai
 
-from src.shared.logger_rasa_v0 import get_logger
-from src.shared.config import get_config
-
 from src.entities.gemini_responder import GeminiResponder
+from src.shared.config import get_config
+from src.shared.logger_rasa_v0 import get_logger
 
 logger = get_logger("gemini-service")
 
@@ -55,7 +55,7 @@ class GeminiService(GeminiResponder):
         "Carga las instrucciones de sistema desde un archivo JSON."
         try:
             logger.debug("Leyendo archivo JSON de instrucciones: %s", json_path)
-            with open(json_path, "r", encoding="utf-8") as f:
+            with open(json_path, encoding="utf-8") as f:
                 data = json.load(f)
             logger.debug("Contenido JSON leído: %s", data)
             return data.get(key)

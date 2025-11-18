@@ -2,9 +2,9 @@
 Tests for TelegramMessagePresenter and MarkdownConverter.
 """
 
-from src.interface_adapter.presenters.telegram_presenter import TelegramMessagePresenter
-from src.interface_adapter.presenters.markdown_converter import MarkdownConverter
 from src.entities.message import Message
+from src.interface_adapter.presenters.markdown_converter import MarkdownConverter
+from src.interface_adapter.presenters.telegram_presenter import TelegramMessagePresenter
 
 
 def test_markdown_converter_bold_and_italic():

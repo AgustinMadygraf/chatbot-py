@@ -3,7 +3,9 @@ Path: src/shared/logger_rasa_v0.py
 """
 
 import logging
+
 import coloredlogs
+
 from src.shared.config import get_config
 
 

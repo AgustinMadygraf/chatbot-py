@@ -13,6 +13,4 @@ class GeminiResponder:
         :param prompt: str, el mensaje del usuario.
         :param system_instructions: str | None, instrucciones de sistema para el modelo.
         """
-        raise NotImplementedError(
-            "Debe implementar get_response(prompt, system_instructions=None)"
-        )
+        raise NotImplementedError("Debe implementar get_response(prompt, system_instructions=None)")

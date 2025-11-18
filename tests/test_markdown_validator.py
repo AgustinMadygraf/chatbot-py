@@ -3,6 +3,7 @@ Tests for MarkdownValidator (src/interface_adapter/presenters/markdown_validator
 """
 
 import pytest
+
 from src.interface_adapter.presenters.markdown_validator import MarkdownValidator
 
 

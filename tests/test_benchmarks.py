@@ -2,11 +2,11 @@
 tests/test_benchmarks.py
 """
 
-import pytest
-from src.interface_adapter.gateways.agent_gateway import AgentGateway
-
-
 import asyncio
+
+import pytest
+
+from src.interface_adapter.gateways.agent_gateway import AgentGateway
 
 
 @pytest.mark.benchmark
