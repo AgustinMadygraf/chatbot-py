@@ -9,7 +9,7 @@ logger = get_logger("generate-agent-response-use-case")
 
 
 class GenerateAgentResponseUseCase:
-    "Orquesta la generación de respuestas usando el servicio Rasa."
+    """Orquesta la generación de respuestas usando el servicio Rasa."""
 
     def __init__(self, agent_bot_service, audio_transcriber_use_case=None):
         self.agent_bot_service = agent_bot_service
@@ -18,7 +18,10 @@ class GenerateAgentResponseUseCase:
     async def execute(
         self, _conversation_id: str, user_message: Message, prompt: str = None
     ) -> Message:
-        "Genera una respuesta para el mensaje del usuario. El prompt puede ser texto transcripto si el mensaje es de audio. (async)"
+        """Genera una respuesta para el usuario.
+
+        El prompt puede ser texto transcripto si el mensaje es de audio. (async)
+        """
         if prompt is not None:
             agent_bot_response = await self.agent_bot_service.get_response(prompt)
         else:

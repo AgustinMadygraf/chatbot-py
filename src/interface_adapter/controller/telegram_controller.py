@@ -6,7 +6,7 @@ from src.entities.message import Message
 
 
 class TelegramMessageController:
-    "Controlador para manejar mensajes entrantes de Telegram usando Rasa."
+    """Controlador para manejar mensajes entrantes de Telegram usando Rasa."""
 
     def __init__(self, use_case, presenter):
         self.use_case = use_case
@@ -15,7 +15,10 @@ class TelegramMessageController:
     async def handle(
         self, chat_id, user_message_or_text, entities=None, transcribed_text: str = None
     ):
-        "Maneja un mensaje entrante de Telegram y genera una respuesta usando el caso de uso. Si es audio, recibe el texto transcripto. (async)"
+        """Genera una respuesta para un mensaje entrante de Telegram.
+
+        Si es audio, recibe el texto transcripto. (async)
+        """
         if isinstance(user_message_or_text, Message):
             user_message = user_message_or_text
         else:
@@ -37,7 +40,7 @@ class TelegramMessageController:
         return chat_id, response_text
 
     def _apply_markdown_formatting(self, text, entities):
-        "Convierte las entidades de Telegram a formato Markdown."
+        """Convierte las entidades de Telegram a formato Markdown."""
         if not entities:
             return text
 

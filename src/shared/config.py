@@ -81,7 +81,8 @@ def get_config():
     config["LOG_MESSAGE_MAX_LENGTH"] = max_length
 
     logger.debug(
-        "Config cargada | TELEGRAM_KEY=%s | GEMINI_KEY=%s | RASA_URL=%s | DISABLE_RASA=%s | LOG_MESSAGE_MAX_LENGTH=%s",
+        "Config cargada | TELEGRAM_KEY=%s | GEMINI_KEY=%s | RASA_URL=%s | "
+        "DISABLE_RASA=%s | LOG_MESSAGE_MAX_LENGTH=%s",
         bool(config["TELEGRAM_API_KEY"]),
         bool(config["GOOGLE_GEMINI_API_KEY"]),
         config["RASA_REST_URL"],

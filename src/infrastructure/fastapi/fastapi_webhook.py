@@ -226,7 +226,10 @@ async def webchat_webhook(request: Request):
         logger.error("[Webchat] Error de conexión con Rasa: %s", e, exc_info=True)
         return {
             "role": "assistant",
-            "text": "Lo sentimos, el servidor no está disponible en este momento. Por favor, comuníquese con el área de mantenimiento.",
+            "text": (
+                "Lo sentimos, el servidor no está disponible en este momento. "
+                "Por favor, comuníquese con el área de mantenimiento."
+            ),
         }
     except (ValueError, TypeError, AttributeError, KeyError) as e:
         logger.error("[Webchat] Error inesperado: %s", e, exc_info=True)

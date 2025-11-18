@@ -37,7 +37,8 @@ class GeminiService(GeminiResponder):
                 )
                 if not self.system_instructions:
                     logger.error(
-                        "No se pudieron cargar las instrucciones de sistema. El bot funcionará sin ellas."
+                        "No se pudieron cargar las instrucciones de sistema. "
+                        "El bot funcionará sin ellas."
                     )
                 else:
                     logger.debug(

@@ -6,14 +6,14 @@ from src.entities.message import Message
 
 
 class WebchatMessageController:
-    "Controlador para manejar mensajes entrantes del webchat usando Rasa."
+    """Controlador para manejar mensajes entrantes del webchat usando Rasa."""
 
     def __init__(self, use_case, presenter):
         self.use_case = use_case
         self.presenter = presenter
 
     async def handle(self, user_id, user_message_or_text):
-        "Maneja un mensaje entrante del webchat y genera una respuesta usando el caso de uso. (async)"
+        """Genera una respuesta para un mensaje entrante del webchat. (async)"""
         if isinstance(user_message_or_text, Message):
             user_message = user_message_or_text
         else:
