@@ -10,6 +10,9 @@ nlu:
     - buenas tardes
     - buenas noches
     - buen día
+    - hola equipo de madypack
+    - buenas, ¿cómo andan?
+    - hola, necesito hacer una consulta
 
 - intent: test_bot
   examples: |
@@ -23,6 +26,8 @@ nlu:
     - prueba de funcionamiento
     - test superado
     - comprobando funcionamiento
+    - solo estoy testeando la conversación
+    - esto es un test rápido
 
 - intent: despedida
   examples: |
@@ -38,6 +43,8 @@ nlu:
     - chau
     - Chau chau
     - Chau, hasta luego
+    - gracias, chau
+    - hablamos luego, muchas gracias
 
 - intent: out_of_scope
   examples: |
@@ -47,8 +54,11 @@ nlu:
     - ¿Qué opinas de la inteligencia artificial?
     - ¿Cuál es el clima hoy?
     - asdfghjkl
-    - No entiendo nada
     - ¿Puedes ayudarme con algo raro?
+    - Mostrame memes
+    - Busco recetas de torta
+    - Necesito soporte de computadora
+    - recomendame una película para hoy
 
 - intent: not_implemented
   examples: |
@@ -62,6 +72,8 @@ nlu:
     - ¿Puedo ver el stock en tiempo real?
     - ¿Tienen integración con Mercado Libre?
     - ¿Puedo recibir factura electrónica automáticamente?
+    - ¿Me pueden avisar por SMS cuando envían?
+    - ¿Puedo automatizar pedidos con mi ERP?
 
 - intent: consultar_producto
   examples: |
@@ -91,11 +103,25 @@ nlu:
     - ¿Pueden imprimir mi logo a dos colores?
     - ¿Cuál es la cantidad mínima de bolsas blancas sin manija?
     - Busco bolsas ecológicas tamaño chico, ¿qué opciones hay?
+    - ¿Trabajan bolsas en papel kraft reciclado?
+    - ¿Tienen opciones con manija de cinta?
+    - ¿Puedo sumar una ventana transparente?
+    - ¿Qué recomendás para panaderías?
 
 - intent: responder_entendido
   examples: |
-    - Esto es una pueba. respondeme con simplemente con un entendido no te extiendas
-    - respondeme con simplemente con un entendido
-    - solo decime entendido
-    - respondé solo con entendido
-    - decime entendido y nada más
+    - confirmame si entendiste
+    - solo respondeme entendido
+    - avisame cuando hayas entendido
+    - decime si quedó claro
+    - respondé únicamente con la palabra entendido
+
+- intent: nlu_fallback
+  examples: |
+    - asdasd asdasd asdasd
+    - lorem ipsum dolor sit amet
+    - 1234567890
+    - ???
+    - mensaje sin sentido alguno
+    - texto desordenado sin contexto
+    - palabra suelta
