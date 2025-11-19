@@ -239,3 +239,8 @@ async def webchat_webhook(request: Request):
         }
 
     return {"role": "assistant", "text": response_text}
+
+@app.get("/test")
+async def test():
+    "Página de inicio simple para verificar que el servidor está funcionando."
+    return {"message": "El servidor está funcionando correctamente."}
