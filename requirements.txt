@@ -466,7 +466,7 @@ sklearn-crfsuite==0.3.6
     # via rasa
 skops==0.9.0
     # via rasa
-slack-sdk==3.38.0
+slack-sdk==3.39.0
     # via rasa
 sniffio==1.3.1
     # via anyio
