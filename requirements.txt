@@ -76,6 +76,7 @@ charset-normalizer==3.4.4
 click==8.3.0
     # via
     #   dask
+    #   sacremoses
     #   typer-slim
     #   uvicorn
 cloudpickle==3.1.2
@@ -111,7 +112,9 @@ fastapi==0.121.2
 fbmessenger==6.0.0
     # via rasa
 filelock==3.20.0
-    # via huggingface-hub
+    # via
+    #   huggingface-hub
+    #   transformers
 fire==0.7.1
     # via randomname
 flatbuffers==25.9.23
@@ -191,7 +194,9 @@ httptools==0.7.1
 httpx==0.28.1
     # via huggingface-hub
 huggingface-hub==1.1.4
-    # via skops
+    # via
+    #   skops
+    #   transformers
 humanfriendly==10.0
     # via coloredlogs
 idna==3.11
@@ -211,7 +216,9 @@ jmespath==1.0.1
     #   boto3
     #   botocore
 joblib==1.5.2
-    # via scikit-learn
+    # via
+    #   sacremoses
+    #   scikit-learn
 jsonpickle==3.0.4
     # via rasa
 jsonschema==4.17.3
@@ -258,6 +265,7 @@ numpy==1.23.5
     #   tensorboard
     #   tensorflow
     #   tensorflow-hub
+    #   transformers
 oauthlib==3.3.1
     # via requests-oauthlib
 opt-einsum==3.4.0
@@ -275,6 +283,7 @@ packaging==20.9
     #   rocketchat-api
     #   skops
     #   tensorflow
+    #   transformers
 pamqp==3.2.1
     # via aiormq
 partd==1.4.2
@@ -377,6 +386,7 @@ pyyaml==6.0.3
     #   dask
     #   huggingface-hub
     #   rasa
+    #   transformers
 questionary==1.10.0
     # via rasa
 randomname==0.1.5
@@ -388,7 +398,10 @@ rasa-sdk==3.6.2
 redis==4.6.0
     # via rasa
 regex==2022.10.31
-    # via rasa
+    # via
+    #   rasa
+    #   sacremoses
+    #   transformers
 requests==2.32.5
     # via
     #   cachecontrol
@@ -400,6 +413,7 @@ requests==2.32.5
     #   requests-toolbelt
     #   rocketchat-api
     #   tensorboard
+    #   transformers
     #   twilio
     #   webexteamssdk
 requests-oauthlib==2.0.0
@@ -419,6 +433,8 @@ ruamel-yaml-clib==0.2.14
     # via ruamel-yaml
 s3transfer==0.14.0
     # via boto3
+sacremoses==0.1.1
+    # via transformers
 safetensors==0.4.5
     # via rasa
 sanic==21.12.2
@@ -514,6 +530,8 @@ terminaltables==3.1.10
     # via rasa
 threadpoolctl==3.6.0
     # via scikit-learn
+tokenizers==0.10.3
+    # via transformers
 toml==0.10.2
     # via pytest
 toolz==1.1.0
@@ -525,7 +543,11 @@ tqdm==4.67.1
     #   google-generativeai
     #   huggingface-hub
     #   rasa
+    #   sacremoses
     #   sklearn-crfsuite
+    #   transformers
+transformers==4.12.2
+    # via -r requirements.in
 twilio==8.2.2
     # via rasa
 typer-slim==0.20.0
