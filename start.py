@@ -125,6 +125,10 @@ def _prepare_env() -> Dict[str, str]:
     repo_root = str(Path(__file__).resolve().parent)
     existing = env.get("PYTHONPATH")
     env["PYTHONPATH"] = f"{repo_root}:{existing}" if existing else repo_root
+    print(f"[DEBUG] PYTHONPATH={env['PYTHONPATH']}", file=sys.stderr)
+    print(f"[DEBUG] PATH={env.get('PATH')}", file=sys.stderr)
+    print(f"[DEBUG] VIRTUAL_ENV={env.get('VIRTUAL_ENV')}", file=sys.stderr)
+    print(f"[DEBUG] Python version: {sys.version}", file=sys.stderr)
     return env
 
 
@@ -155,6 +159,7 @@ class ProcessManager:
         return proc
 
     def _spawn(self, name: str, cmd: List[str]) -> subprocess.Popen[str]:
+        print(f"[DEBUG] Launching process: {name} -> {' '.join(cmd)}", file=sys.stderr)
         proc = subprocess.Popen(cmd, env=self._env)
         self._processes.append((name, proc))
         print(f"[{name}] started with PID {proc.pid}", file=sys.stderr)
